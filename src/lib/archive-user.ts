@@ -156,10 +156,11 @@ export async function archiveUser(userId: string): Promise<ArchiveResult> {
 
     logger.error({ userId, failureType, err: error }, 'Failed to archive user');
 
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return {
       status: 'failed',
       reason: failureType,
-      error: error.message || 'Unknown error'
+      error: errorMessage
     };
   }
 }
