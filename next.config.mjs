@@ -122,4 +122,17 @@ const nextConfig = {
   }
 };
 
+/**
+ * Sentry Integration
+ *
+ * To enable Sentry:
+ * 1. Set up Sentry account and add NEXT_PUBLIC_SENTRY_DSN to .env
+ * 2. Uncomment the withSentryConfig wrapper below
+ * 3. See SENTRY-SETUP.md for detailed instructions
+ */
+
 export default nextConfig;
+
+// Uncomment this when Sentry is configured:
+// import { withSentryConfig } from '@sentry/nextjs';
+// export default withSentryConfig(nextConfig, { silent: true });
