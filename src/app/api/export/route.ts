@@ -5,8 +5,12 @@ import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 
 /**
- * GET /api/export?format=csv|json&range=7d
+ * GET /api/export?format=csv|json&range=7d&gdpr=true
  * Exports user's listening history in CSV or JSON format
+ *
+ * GDPR Mode (gdpr=true):
+ * Exports ALL user data including profile, listening history, shared reports
+ * for compliance with GDPR Article 20 (Right to Data Portability)
  */
 export async function GET(req: NextRequest) {
   try {
@@ -23,6 +27,7 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const format = searchParams.get('format') || 'json';
     const range = searchParams.get('range') || 'all';
+    const gdprMode = searchParams.get('gdpr') === 'true';
 
     // Calculate date range
     const now = new Date();
@@ -65,6 +70,55 @@ export async function GET(req: NextRequest) {
       }
     });
 
+    // GDPR Mode: Fetch ALL user data
+    let userData = null;
+    let shareableReports = null;
+
+    if (gdprMode) {
+      // Fetch user profile data
+      userData = await prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          id: true,
+          spotifyId: true,
+          email: true,
+          name: true,
+          image: true,
+          isActive: true,
+          createdAt: true,
+          updatedAt: true,
+          lastPolledAt: true,
+          lastSuccessfulScrobble: true,
+          subscriptionPlan: true,
+          foundingMemberNumber: true,
+          // Do NOT include tokens for security
+          refreshToken: false,
+          accessToken: false,
+          tokenExpiresAt: false,
+        },
+      });
+
+      // Fetch all shareable reports
+      shareableReports = await prisma.shareableReport.findMany({
+        where: { userId },
+        select: {
+          id: true,
+          shareId: true,
+          title: true,
+          description: true,
+          reportData: true,
+          dateRange: true,
+          isPublic: true,
+          viewCount: true,
+          createdAt: true,
+          expiresAt: true,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+    }
+
     if (format === 'csv') {
       // Generate CSV
       const csvRows = [
@@ -99,8 +153,9 @@ export async function GET(req: NextRequest) {
 
     } else {
       // Generate JSON
-      const exportData = {
+      const exportData: Record<string, unknown> = {
         exportedAt: new Date().toISOString(),
+        exportType: gdprMode ? 'gdpr-full-data-export' : 'listening-history-export',
         dateRange: {
           start: startDate.toISOString(),
           end: now.toISOString(),
@@ -125,18 +180,54 @@ export async function GET(req: NextRequest) {
         }))
       };
 
+      // Add GDPR data if requested
+      if (gdprMode) {
+        exportData.gdprCompliance = {
+          regulation: 'GDPR Article 20 - Right to Data Portability',
+          exportDate: new Date().toISOString(),
+          dataSubject: userId,
+        };
+
+        exportData.profile = userData;
+
+        exportData.shareableReports = shareableReports?.map(report => ({
+          id: report.id,
+          shareId: report.shareId,
+          title: report.title,
+          description: report.description,
+          reportData: JSON.parse(report.reportData),
+          dateRange: report.dateRange,
+          isPublic: report.isPublic,
+          viewCount: report.viewCount,
+          createdAt: report.createdAt,
+          expiresAt: report.expiresAt,
+        }));
+
+        exportData.statistics = {
+          totalListeningHistory: plays.length,
+          totalShareableReports: shareableReports?.length || 0,
+          accountCreated: userData?.createdAt,
+          lastActivity: userData?.lastPolledAt,
+        };
+      }
+
+      const filename = gdprMode
+        ? `spotify-time-machine-gdpr-export-${new Date().toISOString().split('T')[0]}.json`
+        : `spotify-history-${range}.json`;
+
       return new NextResponse(JSON.stringify(exportData, null, 2), {
         headers: {
           'Content-Type': 'application/json',
-          'Content-Disposition': `attachment; filename="spotify-history-${range}.json"`
+          'Content-Disposition': `attachment; filename="${filename}"`
         }
       });
     }
 
-  } catch (error: any) {
+  } catch (error) {
     console.error('[Export API] Error:', error);
+    const message = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { error: 'Failed to export data', message: error.message },
+      { error: 'Failed to export data', message },
       { status: 500 }
     );
   }
