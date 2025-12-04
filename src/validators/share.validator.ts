@@ -13,9 +13,10 @@ import { z } from 'zod';
 export const createShareSchema = z.object({
   title: z
     .string()
-    .min(1, 'Title is required')
+    .min(1, 'Title must be at least 1 character')
     .max(100, 'Title must be less than 100 characters')
-    .trim(),
+    .trim()
+    .optional(),
 
   description: z
     .string()
@@ -28,6 +29,7 @@ export const createShareSchema = z.object({
     .enum(['today', '7d', '30d', 'all'], {
       errorMap: () => ({ message: 'Invalid date range. Must be: today, 7d, 30d, or all' })
     })
+    .optional()
     .default('all')
 });
 

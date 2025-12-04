@@ -1,10 +1,10 @@
 // tests/integration/api/share.test.ts
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { POST, GET } from '@/app/api/share/route';
 import { NextRequest } from 'next/server';
-import { ZodError } from 'zod';
 
-// Mock dependencies
+// Mock dependencies BEFORE importing the module under test
 vi.mock('next-auth', () => ({
   getServerSession: vi.fn()
 }));
@@ -30,14 +30,19 @@ vi.mock('crypto', async (importOriginal) => {
   const actual = await importOriginal<typeof import('crypto')>();
   return {
     ...actual,
+    default: actual,
     randomBytes: vi.fn(() => ({
       toString: () => 'abc123def456'
     }))
   };
 });
 
+// Import mocked modules
 import { getServerSession } from 'next-auth';
 import { prisma } from '@/lib/prisma';
+
+// Import module under test AFTER mocks are set up
+import { POST, GET } from '@/app/api/share/route';
 
 describe('POST /api/share', () => {
   beforeEach(() => {

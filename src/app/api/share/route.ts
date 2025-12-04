@@ -90,24 +90,25 @@ export async function POST(req: NextRequest) {
       shareUrl: `${process.env.NEXTAUTH_URL}/share/${report.shareId}`
     });
 
-  } catch (error: any) {
+  } catch (error) {
     // Handle validation errors
     if (error instanceof ZodError) {
       return NextResponse.json(
         {
           error: 'Validation failed',
-          details: error.errors.map(e => ({
+          details: error.errors?.map(e => ({
             field: e.path.join('.'),
             message: e.message
-          }))
+          })) || []
         },
         { status: 400 }
       );
     }
 
     console.error('[Share API] Error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { error: 'Failed to create shareable report', message: error.message },
+      { error: 'Failed to create shareable report', message: errorMessage },
       { status: 500 }
     );
   }
@@ -157,10 +158,11 @@ export async function GET(req: NextRequest) {
       userName: report.user.name
     });
 
-  } catch (error: any) {
+  } catch (error) {
     console.error('[Share API GET] Error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { error: 'Failed to fetch report', message: error.message },
+      { error: 'Failed to fetch report', message: errorMessage },
       { status: 500 }
     );
   }
