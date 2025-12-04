@@ -1,4 +1,4 @@
-# Competitive Analysis Report: Spotify Time Machine
+# Competitive Analysis Report: Audiospective
 
 ## Document Information
 **Version:** 1.0
@@ -10,7 +10,7 @@
 
 ## Executive Summary
 
-This competitive analysis examines two production-grade archival/scrobbling implementations to extract proven architectural patterns for Spotify Time Machine. The analysis reveals 10 critical production patterns that directly address our identified architectural risks:
+This competitive analysis examines two production-grade archival/scrobbling implementations to extract proven architectural patterns for Audiospective. The analysis reveals 10 critical production patterns that directly address our identified architectural risks:
 
 **Key Findings:**
 1. **Token Management:** 5-minute proactive refresh buffer prevents mid-job expiration (addresses Risk #1)
@@ -35,7 +35,7 @@ This competitive analysis examines two production-grade archival/scrobbling impl
 
 **Category:** Open-Source Technical Implementations
 
-1. **Live Dashboard (Reference):** jjsizemore/spotify-time-machine
+1. **Live Dashboard (Reference):** jjsizemore/audiospective
    - Next.js 16 dashboard with advanced token management
    - No archival capability but excellent API reliability patterns
 
@@ -95,7 +95,7 @@ This competitive analysis examines two production-grade archival/scrobbling impl
 - ✅ **User's Custom Schema** - Normalized approach with 5× storage savings
 
 **Priority 2 (Emerging Insights): Medium Relevance + High Learning Value**
-- ✅ **jjsizemore/spotify-time-machine** - Token management and API reliability patterns
+- ✅ **jjsizemore/audiospective** - Token management and API reliability patterns
 
 **Priority 3 (Monitor Only): Low Relevance**
 - Power BI/Streamlit dashboards (visualization-only, no archival)
@@ -104,10 +104,10 @@ This competitive analysis examines two production-grade archival/scrobbling impl
 
 ## Individual Competitor Profiles
 
-### Competitor #1: jjsizemore/spotify-time-machine - Priority 2
+### Competitor #1: jjsizemore/audiospective - Priority 2
 
 #### Company Overview
-- **Repository:** https://github.com/jjsizemore/spotify-time-machine
+- **Repository:** https://github.com/jjsizemore/audiospective
 - **Type:** Open-source Next.js dashboard (live data only)
 - **Tech Stack:** Next.js 16 (App Router), NextAuth v4, React Query v5
 - **Archival Capability:** ❌ None (no database, no background jobs)
@@ -131,7 +131,7 @@ const refreshedToken = await refreshAccessToken(token.refreshToken);
 
 **Key Insight:** Refresh tokens 5 minutes before expiration (not at expiration) to prevent mid-job failures. This directly addresses our Risk #1 (Token expiration during archival).
 
-**File Location:** `/tmp/spotify-time-machine/src/app/api/auth/[...nextauth]/route.ts`
+**File Location:** `/tmp/audiospective/src/app/api/auth/[...nextauth]/route.ts`
 
 #### Product/Service Analysis
 
@@ -660,7 +660,7 @@ async function persistPlayEvent(userDbId: string, item: SpotifyPlayedItem) {
 
 ### Feature Comparison Matrix
 
-| Feature Category | Spotify Time Machine (Ours) | jjsizemore | ytmusic-scrobbler | User's Schema |
+| Feature Category | Audiospective (Ours) | jjsizemore | ytmusic-scrobbler | User's Schema |
 |------------------|------------------------------|------------|-------------------|---------------|
 | **Archival Capability** |
 | Database Storage | ✅ Planned | ❌ None | ✅ PostgreSQL | ✅ Planned |
@@ -701,7 +701,7 @@ async function persistPlayEvent(userDbId: string, item: SpotifyPlayedItem) {
 
 ### SWOT Comparison
 
-#### Spotify Time Machine (Our Solution)
+#### Audiospective (Our Solution)
 
 **Strengths:**
 - ✅ Normalized schema design (5× storage savings vs denormalized)
@@ -828,7 +828,7 @@ async function persistPlayEvent(userDbId: string, item: SpotifyPlayedItem) {
 
 **Positioning Against Competitors:**
 
-**vs. jjsizemore/spotify-time-machine:**
+**vs. jjsizemore/audiospective:**
 - **Message:** "We provide archival, not just live dashboards"
 - **Feature Focus:** Background jobs, historical queries, trend analysis
 
@@ -920,7 +920,7 @@ async function persistPlayEvent(userDbId: string, item: SpotifyPlayedItem) {
 - **Resend** → Email notifications (following ytmusic-scrobbler pattern)
 
 **4. Strategic Alliances:**
-- **Stats for Spotify** → Cross-promotion ("Want to self-host? Use Spotify Time Machine")
+- **Stats for Spotify** → Cross-promotion ("Want to self-host? Use Audiospective")
 - **ytmusic-scrobbler** → Share circuit breaker patterns, cross-link repos
 
 ---
@@ -939,7 +939,7 @@ async function persistPlayEvent(userDbId: string, item: SpotifyPlayedItem) {
    - **Watch For:** New fields, indexing strategies, query optimizations
 
 **Priority 2 (Monthly Monitoring):**
-3. **jjsizemore/spotify-time-machine**
+3. **jjsizemore/audiospective**
    - **Why:** Best practices for Spotify API integration
    - **Watch For:** Token management updates, new API patterns, rate limit handling
 
@@ -1012,12 +1012,12 @@ async function persistPlayEvent(userDbId: string, item: SpotifyPlayedItem) {
 
 ## Appendix: Key Files Analyzed
 
-### Repository: jjsizemore/spotify-time-machine
-- `/tmp/spotify-time-machine/README.md` - Architecture overview
-- `/tmp/spotify-time-machine/package.json` - Tech stack confirmation
-- `/tmp/spotify-time-machine/src/app/api/auth/[...nextauth]/route.ts` - Token refresh logic
-- `/tmp/spotify-time-machine/src/lib/spotify.ts` - API reliability patterns (518 lines)
-- `/tmp/spotify-time-machine/src/lib/tokenUtils.ts` - Token expiry utilities
+### Repository: jjsizemore/audiospective
+- `/tmp/audiospective/README.md` - Architecture overview
+- `/tmp/audiospective/package.json` - Tech stack confirmation
+- `/tmp/audiospective/src/app/api/auth/[...nextauth]/route.ts` - Token refresh logic
+- `/tmp/audiospective/src/lib/spotify.ts` - API reliability patterns (518 lines)
+- `/tmp/audiospective/src/lib/tokenUtils.ts` - Token expiry utilities
 
 ### Repository: ytmusic-scrobbler-web
 - `/tmp/ytmusic-scrobbler-web/README.md` - System architecture

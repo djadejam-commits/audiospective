@@ -5,7 +5,7 @@
 
 ## Introduction
 
-Welcome to Spotify Time Machine ("we," "our," or "us"). We are committed to protecting your privacy and being transparent about how we collect, use, and safeguard your personal information.
+Welcome to Audiospective ("we," "our," or "us"). We are committed to protecting your privacy and being transparent about how we collect, use, and safeguard your personal information.
 
 This Privacy Policy explains:
 - What information we collect and why
@@ -13,7 +13,7 @@ This Privacy Policy explains:
 - Your rights and choices regarding your data
 - How we protect your information
 
-By using Spotify Time Machine, you agree to the collection and use of information in accordance with this policy.
+By using Audiospective, you agree to the collection and use of information in accordance with this policy.
 
 ---
 
@@ -107,7 +107,7 @@ When you delete your account, we:
 
 ## 4. Third-Party Services
 
-We use the following third-party services to operate Spotify Time Machine:
+We use the following third-party services to operate Audiospective:
 
 ### 4.1 Spotify
 
@@ -254,7 +254,7 @@ In the event of a data breach, we will:
 
 ## 8. Children's Privacy
 
-Spotify Time Machine is not intended for users under 13 years of age. We do not knowingly collect information from children under 13.
+Audiospective is not intended for users under 13 years of age. We do not knowingly collect information from children under 13.
 
 If you are a parent or guardian and believe your child has provided us with personal information, please contact us at [contact email] and we will delete the information immediately.
 
@@ -264,7 +264,7 @@ If you are a parent or guardian and believe your child has provided us with pers
 
 We are based in [Your Country] and our servers are located in the United States and European Union.
 
-If you are accessing Spotify Time Machine from outside these regions, your data may be transferred to and processed in these jurisdictions.
+If you are accessing Audiospective from outside these regions, your data may be transferred to and processed in these jurisdictions.
 
 We ensure adequate safeguards are in place:
 - Standard Contractual Clauses (SCCs) with third-party processors
@@ -355,9 +355,9 @@ We do not use automated decision-making or profiling that produces legal effects
 
 ## Acknowledgment
 
-By using Spotify Time Machine, you acknowledge that you have read and understood this Privacy Policy.
+By using Audiospective, you acknowledge that you have read and understood this Privacy Policy.
 
 ---
 
-**Spotify Time Machine Privacy Policy - Version 1.0**
+**Audiospective Privacy Policy - Version 1.0**
 **Effective Date:** December 4, 2025

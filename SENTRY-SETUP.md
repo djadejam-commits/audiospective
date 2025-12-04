@@ -28,7 +28,7 @@ Sentry provides real-time error monitoring and tracking for production applicati
 1. Visit: https://sentry.io
 2. Click **"Get Started"** → Sign up with GitHub/email
 3. Select **"Next.js"** as your platform
-4. Create project name: `spotify-time-machine`
+4. Create project name: `audiospective`
 5. Select region: **US East (default)**
 
 **Result:** You'll see the Sentry dashboard with a DSN key.
@@ -38,7 +38,7 @@ Sentry provides real-time error monitoring and tracking for production applicati
 ## Step 2: Get Your Sentry DSN (2 minutes)
 
 1. In Sentry dashboard → **Settings** → **Projects**
-2. Click your project: `spotify-time-machine`
+2. Click your project: `audiospective`
 3. Go to **Settings** → **Client Keys (DSN)**
 4. Copy the **DSN** URL:
    ```
@@ -55,7 +55,7 @@ This token allows uploading source maps for better error debugging.
 2. Go to **Auth Tokens**
 3. Click **"Create New Token"**
 4. Configure:
-   - **Name:** `spotify-time-machine-ci`
+   - **Name:** `audiospective-ci`
    - **Scopes:** Check these boxes:
      - `project:read`
      - `project:releases`
@@ -75,7 +75,7 @@ NEXT_PUBLIC_SENTRY_DSN="https://your-dsn@sentry.io/project-id"
 NEXT_PUBLIC_SENTRY_ENVIRONMENT="development"  # or "production"
 SENTRY_AUTH_TOKEN="sntrys_your_auth_token_here"
 SENTRY_ORG="your-sentry-organization-slug"
-SENTRY_PROJECT="spotify-time-machine"
+SENTRY_PROJECT="audiospective"
 ```
 
 **How to find these values:**
@@ -84,7 +84,7 @@ SENTRY_PROJECT="spotify-time-machine"
 - **Environment:** `development` for local, `production` for deployed
 - **Auth Token:** From Step 3 above
 - **Org Slug:** In Sentry URL: `https://sentry.io/organizations/YOUR-ORG-SLUG/`
-- **Project:** `spotify-time-machine` (or your project name)
+- **Project:** `audiospective` (or your project name)
 
 ---
 
@@ -133,7 +133,7 @@ vercel env add SENTRY_ORG production
 # Type your org slug
 
 vercel env add SENTRY_PROJECT production
-# Type: spotify-time-machine
+# Type: audiospective
 ```
 
 **Or via Vercel Dashboard:**

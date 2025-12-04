@@ -4,6 +4,7 @@ import "./globals.css";
 import { SessionProvider } from "@/components/SessionProvider";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { CookieConsent } from "@/components/CookieConsent";
+import { Analytics } from "@vercel/analytics/react";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -11,7 +12,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Spotify Time Machine",
+  title: "Audiospective",
   description: "Your complete Spotify listening history, automatically archived every hour.",
 };
 
@@ -31,6 +32,7 @@ export default function RootLayout({
           </SessionProvider>
         </ErrorBoundary>
         <CookieConsent />
+        <Analytics />
       </body>
     </html>
   );

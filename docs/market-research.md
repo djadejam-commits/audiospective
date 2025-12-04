@@ -1,4 +1,4 @@
-# Market Research Report: Spotify Time Machine
+# Market Research Report: Audiospective
 
 > **Status:** Complete
 > **Date:** 2025-11-27
@@ -10,7 +10,7 @@
 
 ### Market Opportunity Overview
 
-Spotify Time Machine targets a **$150M annual market opportunity** (at full SOM penetration) by serving "Music Archivists"—users who fear losing their listening history and value data ownership. This represents 5-10% of the 50 Million "Analytics-Curious" Spotify users who already use third-party music tracking tools.
+Audiospective targets a **$150M annual market opportunity** (at full SOM penetration) by serving "Music Archivists"—users who fear losing their listening history and value data ownership. This represents 5-10% of the 50 Million "Analytics-Curious" Spotify users who already use third-party music tracking tools.
 
 **The market is proven, growing, and underserved:**
 - **stats.fm has 27 Million users** paying ~$5/mo for analytics (validates demand and price point)
@@ -158,7 +158,7 @@ Spotify Time Machine targets a **$150M annual market opportunity** (at full SOM 
 3. *"Set it and forget it. Your music history, archived forever."*
 
 **Positioning Statement:**
-> "For Music Archivists who fear losing their listening history, Spotify Time Machine is the only archival tool that guarantees data ownership through comprehensive export and unlimited retention. Unlike stats.fm (no export) and Last.fm (no backfill), we ensure your music identity is preserved and portable—forever."
+> "For Music Archivists who fear losing their listening history, Audiospective is the only archival tool that guarantees data ownership through comprehensive export and unlimited retention. Unlike stats.fm (no export) and Last.fm (no backfill), we ensure your music identity is preserved and portable—forever."
 
 **Differentiation Wedge:**
 - **Avoid:** Competing with stats.fm on analytics (they have scale, network effects)
@@ -239,7 +239,7 @@ Spotify Time Machine targets a **$150M annual market opportunity** (at full SOM 
 
 ### Research Objectives
 
-This market research aims to validate and refine our market assumptions for Spotify Time Machine. Specifically, we need to answer:
+This market research aims to validate and refine our market assumptions for Audiospective. Specifically, we need to answer:
 
 **Primary Objectives:**
 
@@ -598,7 +598,7 @@ Casual Spotify users who love Spotify Wrapped but are frustrated they have to wa
 
 ### Jobs-to-be-Done Analysis
 
-When users "hire" Spotify Time Machine, they're not just buying "listening history archival." They're hiring it to fulfill deeper functional, emotional, and social needs.
+When users "hire" Audiospective, they're not just buying "listening history archival." They're hiring it to fulfill deeper functional, emotional, and social needs.
 
 #### Functional Jobs
 
@@ -638,9 +638,9 @@ When users "hire" Spotify Time Machine, they're not just buying "listening histo
 
 #### 1. Awareness
 
-**How they discover Spotify Time Machine:**
+**How they discover Audiospective:**
 - **Reddit Thread (r/datahoarder):** User posts: "PSA: Spotify only shows your last 50 songs. Everything else is GONE forever."
-  - Comment: "I use Spotify Time Machine. Been archiving for 6 months, zero data loss."
+  - Comment: "I use Audiospective. Been archiving for 6 months, zero data loss."
 - **Hacker News Comment:** On a post about "Enshittification of Streaming Services"
 - **Google Search:** "how to save spotify listening history" (SEO opportunity)
 - **Product Hunt Launch:** "Show HN: I built an 'Always-on Wrapped' to prevent Spotify data loss"
@@ -698,7 +698,7 @@ When users "hire" Spotify Time Machine, they're not just buying "listening histo
 #### 6. Advocacy
 
 **Referral Behaviors:**
-- **Reddit Evangelism:** Posts in r/datahoarder: "PSA: Use Spotify Time Machine before you lose years of data"
+- **Reddit Evangelism:** Posts in r/datahoarder: "PSA: Use Audiospective before you lose years of data"
 - **GitHub Stars:** If open-source component exists, stars the repo
 - **Word of Mouth:** Tells fellow "Quantified Self" friends at meetups
 - **Testimonials:** Willing to provide quote: *"Saved 2 years of listening history. Worth every penny."*
@@ -845,7 +845,7 @@ While there are many competitors, most focus on **analytics** (stats.fm, Obscuri
 - **100% Free:** No paid tier, no premium features
 - **Sustainability Risk:** Developer burnout + server costs = potential shutdown
 
-**Competitive Gap:** Receiptify proves demand for **shareable visuals** but offers zero archival value. Users who love Receiptify aesthetics might also want Spotify Time Machine for the underlying data preservation.
+**Competitive Gap:** Receiptify proves demand for **shareable visuals** but offers zero archival value. Users who love Receiptify aesthetics might also want Audiospective for the underlying data preservation.
 
 ---
 
@@ -962,7 +962,7 @@ While there are many competitors, most focus on **analytics** (stats.fm, Obscuri
 
 **Positioning Statement:**
 
-> "For Music Archivists who fear losing their listening history, Spotify Time Machine is the only archival tool that guarantees data ownership through comprehensive export and unlimited retention. Unlike stats.fm (no export) and Last.fm (no backfill), we ensure your music identity is preserved and portable—forever."
+> "For Music Archivists who fear losing their listening history, Audiospective is the only archival tool that guarantees data ownership through comprehensive export and unlimited retention. Unlike stats.fm (no export) and Last.fm (no backfill), we ensure your music identity is preserved and portable—forever."
 
 ---
 
@@ -1241,7 +1241,7 @@ We can capture the 5-10% of stats.fm's user base who care about **data sovereign
 - **Technical complexity:** Export must work flawlessly or positioning collapses
 
 **Go-to-Market Channels:**
-- Reddit threads where users ask "Can I export my stats.fm data?" (answer: "No, but you can with Spotify Time Machine")
+- Reddit threads where users ask "Can I export my stats.fm data?" (answer: "No, but you can with Audiospective")
 - Hacker News "Show HN" post emphasizing data ownership philosophy
 - Product Hunt launch with tagline: *"The only music tracker that lets you leave"*
 
@@ -1259,7 +1259,7 @@ We can offer a superior "Day 1 Experience" by backfilling the last 50 songs imme
 - **TAM Subset:** Users discovering music tracking for the first time (millions annually based on stats.fm growth)
 - **Conversion Opportunity:** "I just discovered music tracking, which tool do I choose?"
   - Last.fm: Start empty (no history)
-  - Spotify Time Machine: Start with 50 songs (instant gratification)
+  - Audiospective: Start with 50 songs (instant gratification)
 - **Revenue Impact:** Higher signup → paid conversion rate (reduces drop-off during "empty state" onboarding)
 
 **Requirements to Capture:**
@@ -1275,7 +1275,7 @@ We can offer a superior "Day 1 Experience" by backfilling the last 50 songs imme
 
 **Go-to-Market Channels:**
 - Twitter replies to users posting "I wish I'd started Last.fm earlier"
-- Comparison landing page: "Last.fm vs Spotify Time Machine" (emphasizing backfill)
+- Comparison landing page: "Last.fm vs Audiospective" (emphasizing backfill)
 - Onboarding email sequence: "You've already archived 50 songs—here's what you would have lost"
 
 ---
@@ -1403,7 +1403,7 @@ We can position as the "Oura Ring for Music"—a passive, reliable tracker that 
    - Expected CAC: $0 (time investment only)
 
 2. **Hacker News**
-   - Post: "Show HN: Spotify Time Machine – Archive your listening history before it disappears"
+   - Post: "Show HN: Audiospective – Archive your listening history before it disappears"
    - Positioning: Emphasize technical architecture (QStash, idempotency, normalized schema)
    - Expected Reach: 10K-50K impressions if it hits front page
 
@@ -1559,7 +1559,7 @@ We can position as the "Oura Ring for Music"—a passive, reliable tracker that 
 
 2. **Dead Man's Switch (24-Hour Failure Alert)**
    - If user's archival fails for 24 consecutive hours → transactional email
-   - "Spotify Time Machine has disconnected. Click to reconnect."
+   - "Audiospective has disconnected. Click to reconnect."
    - GDPR-compliant (legitimate interest—system alerts)
 
 3. **Monitoring Infrastructure**

@@ -1,4 +1,4 @@
-# Contributing to Spotify Time Machine
+# Contributing to Audiospective
 
 Thank you for your interest in contributing! This document provides guidelines for contributing to the project.
 
@@ -51,13 +51,13 @@ We pledge to make participation in our project a harassment-free experience for 
 
 1. **Fork the repository**
    ```bash
-   gh repo fork anthropics/spotify-time-machine
+   gh repo fork anthropics/audiospective
    ```
 
 2. **Clone your fork**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/spotify-time-machine.git
-   cd spotify-time-machine
+   git clone https://github.com/YOUR_USERNAME/audiospective.git
+   cd audiospective
    ```
 
 3. **Install dependencies**

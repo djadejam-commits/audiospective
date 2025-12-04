@@ -10,7 +10,7 @@ export default function Home() {
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-green-50 to-white dark:from-black dark:to-zinc-900">
       <main className="max-w-2xl px-8 py-16 text-center">
         <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-green-600 to-green-400 bg-clip-text text-transparent">
-          Spotify Time Machine
+          Audiospective
         </h1>
 
         <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">

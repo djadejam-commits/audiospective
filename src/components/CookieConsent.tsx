@@ -10,7 +10,7 @@ export function CookieConsent() {
       buttonText="Accept All"
       declineButtonText="Reject Non-Essential"
       enableDeclineButton
-      cookieName="spotify-time-machine-cookie-consent"
+      cookieName="audiospective-cookie-consent"
       style={{
         background: "#1a1a1a",
         padding: "20px",

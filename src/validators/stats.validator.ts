@@ -10,16 +10,12 @@ import { z } from 'zod';
  */
 
 export const statsQuerySchema = z.object({
-  range: z
-    .enum(['today', '7d', '30d', 'all'], {
-      errorMap: () => ({ message: 'Invalid date range. Must be: today, 7d, 30d, or all' })
-    })
-    .default('7d'),
+  range: z.enum(['today', '7d', '30d', 'all']).default('7d'),
 
   userId: z
     .string()
     .uuid('Invalid user ID format')
-    .optional() // Only used internally, not from user input
+    .optional(), // Only used internally, not from user input
 });
 
 export const dateRangeSchema = z.object({

@@ -30,7 +30,7 @@ Your current SQLite database will **fail in production** with these issues:
 #### Option A: Neon (Recommended) ⭐
 1. Visit: https://neon.tech
 2. Click "Sign up" (free tier: 0.5GB storage)
-3. Create new project: "spotify-time-machine"
+3. Create new project: "audiospective"
 4. Select region closest to your users
 5. Copy connection string:
    ```

@@ -36,7 +36,7 @@ Navigate to your repository Settings → Secrets and variables → Actions → N
 #### `PRODUCTION_URL`
 - **Purpose:** URL of your production deployment for health checks
 - **Value:** `https://your-domain.com` (or your Vercel URL)
-- **Example:** `https://spotify-time-machine.vercel.app`
+- **Example:** `https://audiospective.vercel.app`
 
 ### 2. Sentry Monitoring (Optional but Recommended)
 

@@ -7,7 +7,7 @@ process.env.NEXTAUTH_SECRET = 'test-secret-for-testing-only';
 process.env.NEXTAUTH_URL = 'http://localhost:3000';
 process.env.SPOTIFY_CLIENT_ID = 'test-client-id';
 process.env.SPOTIFY_CLIENT_SECRET = 'test-client-secret';
-process.env.NODE_ENV = 'test';
+// NODE_ENV is set by test runner automatically
 
 // Mock Next.js modules
 vi.mock('next/navigation', () => ({

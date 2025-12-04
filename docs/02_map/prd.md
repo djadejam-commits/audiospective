@@ -1,4 +1,4 @@
-# Product Requirement Document: Spotify Time Machine MVP
+# Product Requirement Document: Audiospective MVP
 
 ## 1. Summary
 A Next.js web application that serves as an "Always-on Wrapped." It uses a **Hybrid Data Strategy**: immediate "Top Items" for instant gratification, and a background "Resilient Poller" for long-term history archiving.

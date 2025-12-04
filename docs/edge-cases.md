@@ -1,4 +1,4 @@
-# Edge Cases Analysis: Spotify Time Machine
+# Edge Cases Analysis: Audiospective
 
 ## Document Information
 **Version:** 1.0
@@ -166,7 +166,7 @@ if (items.length === 0) {
 ### 1.2 Multi-Device Token Conflicts
 
 #### EC-AUTH-007: User Logs In on Two Devices Simultaneously
-**Scenario:** User has Spotify Time Machine open on laptop (token A) and phone (token B). Spotify only allows one active session per user.
+**Scenario:** User has Audiospective open on laptop (token A) and phone (token B). Spotify only allows one active session per user.
 
 **Impact:** One device's token becomes invalid. Archival job might use stale token.
 
@@ -194,7 +194,7 @@ if (consecutiveFailures >= 1 && failureType === 'AUTH') {
     // Send Dead Man's Switch email
     await sendTransactionalAlert({
       to: user.email,
-      subject: 'Spotify Time Machine has disconnected',
+      subject: 'Audiospective has disconnected',
       body: 'Click here to resume archival: [Reconnect Link]'
     });
   }
@@ -1623,4 +1623,4 @@ This edge cases analysis identified **50 distinct corner scenarios** across Stor
 
 ---
 
-*Document created using systematic edge case elicitation across 10 categories, informed by production patterns from jjsizemore/spotify-time-machine and ytmusic-scrobbler-web*
+*Document created using systematic edge case elicitation across 10 categories, informed by production patterns from jjsizemore/audiospective and ytmusic-scrobbler-web*

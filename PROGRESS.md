@@ -1,4 +1,4 @@
-# Spotify Time Machine - Progress Report
+# Audiospective - Progress Report
 
 ## ✅ COMPLETED: Story 01 - Foundation & Authentication
 
@@ -101,7 +101,7 @@ user-read-email user-read-recently-played user-top-read
 
 ## 🚀 Quick Start After Restart
 ```bash
-cd /Users/adeoluwatokuta/spotify-time-machine
+cd /Users/adeoluwatokuta/audiospective
 npm install
 npx prisma generate
 npm run dev

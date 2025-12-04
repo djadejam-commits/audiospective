@@ -135,12 +135,12 @@ const envSchema = z.object({
 function validateEnv() {
   try {
     return envSchema.parse(process.env);
-  } catch (error) {
+  } catch (error: unknown) {
     if (error instanceof z.ZodError) {
       console.error('❌ Invalid environment variables:');
       console.error('');
 
-      error.errors.forEach((err) => {
+      error.issues.forEach((err) => {
         console.error(`  ${err.path.join('.')}: ${err.message}`);
       });
 

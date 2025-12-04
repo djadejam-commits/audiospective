@@ -35,6 +35,7 @@ export default function SharePage() {
     if (shareId) {
       loadReport();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shareId]);
 
   async function loadReport() {
@@ -226,7 +227,7 @@ export default function SharePage() {
       {/* Footer */}
       <footer className="border-t border-gray-200 dark:border-zinc-800 mt-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-sm text-gray-600 dark:text-gray-400">
-          <p>Powered by Spotify Time Machine</p>
+          <p>Powered by Audiospective</p>
         </div>
       </footer>
     </div>

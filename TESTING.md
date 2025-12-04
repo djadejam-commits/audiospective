@@ -1,4 +1,4 @@
-# Testing Guide - Spotify Time Machine
+# Testing Guide - Audiospective
 
 ## Current Status
 

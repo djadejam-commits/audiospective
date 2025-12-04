@@ -49,7 +49,8 @@ export async function GET(req: NextRequest) {
         break;
     }
 
-    // Fetch all plays in range
+    // Fetch plays in range (with 10k limit to prevent memory issues)
+    const MAX_EXPORT_LIMIT = 10000;
     const plays = await prisma.playEvent.findMany({
       where: {
         userId,
@@ -67,8 +68,21 @@ export async function GET(req: NextRequest) {
       },
       orderBy: {
         playedAt: 'desc'
+      },
+      take: MAX_EXPORT_LIMIT
+    });
+
+    // Count total plays for informational purposes
+    const totalPlays = await prisma.playEvent.count({
+      where: {
+        userId,
+        playedAt: {
+          gte: startDate
+        }
       }
     });
+
+    const isTruncated = totalPlays > MAX_EXPORT_LIMIT;
 
     // GDPR Mode: Fetch ALL user data
     let userData = null;
@@ -122,6 +136,10 @@ export async function GET(req: NextRequest) {
     if (format === 'csv') {
       // Generate CSV
       const csvRows = [
+        // Warning comment if truncated
+        ...(isTruncated ? [
+          `# Warning: Export limited to ${MAX_EXPORT_LIMIT} most recent plays (Total: ${totalPlays})`
+        ] : []),
         // Header
         ['Date', 'Time', 'Track', 'Artists', 'Album', 'Duration (min)'].join(','),
         // Data rows
@@ -161,7 +179,12 @@ export async function GET(req: NextRequest) {
           end: now.toISOString(),
           label: range
         },
-        totalPlays: plays.length,
+        totalPlays,
+        exportedPlays: plays.length,
+        isTruncated,
+        ...(isTruncated && {
+          warning: `Export limited to ${MAX_EXPORT_LIMIT} most recent plays. Total plays: ${totalPlays}`
+        }),
         plays: plays.map(play => ({
           playedAt: play.playedAt,
           track: {
@@ -212,7 +235,7 @@ export async function GET(req: NextRequest) {
       }
 
       const filename = gdprMode
-        ? `spotify-time-machine-gdpr-export-${new Date().toISOString().split('T')[0]}.json`
+        ? `audiospective-gdpr-export-${new Date().toISOString().split('T')[0]}.json`
         : `spotify-history-${range}.json`;
 
       return new NextResponse(JSON.stringify(exportData, null, 2), {

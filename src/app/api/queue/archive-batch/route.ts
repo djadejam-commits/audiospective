@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifySignatureAppRouter } from '@upstash/qstash/nextjs';
 import { archiveUser } from '@/lib/archive-user';
+import { logger } from '@/lib/logger';
 
 /**
  * Batch worker endpoint
@@ -21,7 +22,11 @@ async function handler(req: NextRequest) {
       );
     }
 
-    console.log(`[Batch Worker] Processing batch ${batchNumber || '?'}/${totalBatches || '?'} with ${userIds.length} users`);
+    logger.info({
+      batchNumber: batchNumber || 0,
+      totalBatches: totalBatches || 0,
+      userCount: userIds.length
+    }, 'Processing batch');
 
     const startTime = Date.now();
 
@@ -31,12 +36,13 @@ async function handler(req: NextRequest) {
       userIds.map(async (userId: string) => {
         try {
           return await archiveUser(userId);
-        } catch (error: any) {
-          console.error(`[Batch Worker] Failed to archive user ${userId}:`, error);
+        } catch (error: unknown) {
+          logger.error({ userId, err: error }, 'Failed to archive user in batch');
+          const message = error instanceof Error ? error.message : 'Unknown error';
           return {
             status: 'failed' as const,
             userId,
-            error: error.message || 'Unknown error'
+            error: message
           };
         }
       })
@@ -56,17 +62,27 @@ async function handler(req: NextRequest) {
 
     // Log failures for monitoring
     if (failed.length > 0) {
-      console.warn(`[Batch Worker] Batch ${batchNumber} completed with ${failed.length}/${userIds.length} failures`);
-      failed.forEach((result, index) => {
+      logger.warn({
+        batchNumber,
+        failedCount: failed.length,
+        totalCount: userIds.length
+      }, 'Batch completed with failures');
+      failed.forEach((result) => {
         if (result.status === 'rejected') {
-          console.error(`[Batch Worker] User failed (rejected):`, result.reason);
+          logger.error({ err: result.reason }, 'User failed (rejected)');
         } else if (result.status === 'fulfilled') {
-          console.error(`[Batch Worker] User failed:`, result.value);
+          logger.error({ result: result.value }, 'User failed');
         }
       });
     }
 
-    console.log(`[Batch Worker] Batch ${batchNumber} completed in ${duration}ms: ${successful.length} success, ${skipped.length} skipped, ${failed.length} failed`);
+    logger.info({
+      batchNumber,
+      durationMs: duration,
+      successful: successful.length,
+      skipped: skipped.length,
+      failed: failed.length
+    }, 'Batch completed');
 
     return NextResponse.json({
       success: true,
@@ -80,24 +96,17 @@ async function handler(req: NextRequest) {
       totalBatches
     });
 
-  } catch (error: any) {
-    console.error('[Batch Worker] Unexpected error:', error);
+  } catch (error: unknown) {
+    logger.error({ err: error }, 'Unexpected error in batch worker');
+    const message = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { error: 'Batch processing failed', message: error.message },
+      { error: 'Batch processing failed', message },
       { status: 500 }
     );
   }
 }
 
-// Wrap with QStash signature verification
-export const POST = verifySignatureAppRouter(handler);
-
-// Allow GET for manual testing (remove in production)
-export async function GET(req: NextRequest) {
-  const authHeader = req.headers.get('authorization');
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  return handler(req);
-}
+// Wrap with QStash signature verification (only if QStash is configured)
+export const POST = process.env.QSTASH_CURRENT_SIGNING_KEY
+  ? verifySignatureAppRouter(handler)
+  : handler;

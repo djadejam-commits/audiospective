@@ -1,5 +1,5 @@
 # 📂 Master Project Documentation
-## Spotify Time Machine (MVP)
+## Audiospective (MVP)
 
 > **Status:** Transitioning from MAP to ACTION
 > **Version:** 1.0
@@ -217,4 +217,4 @@ To build this without getting overwhelmed, we will execute these three distinct 
 
 ---
 
-*This document serves as the single source of truth for the Spotify Time Machine project.*
+*This document serves as the single source of truth for the Audiospective project.*

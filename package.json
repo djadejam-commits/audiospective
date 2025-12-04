@@ -1,5 +1,5 @@
 {
-  "name": "spotify-time-machine",
+  "name": "audiospective",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -28,8 +28,11 @@
     "@upstash/qstash": "^2.8.4",
     "@upstash/ratelimit": "^2.0.7",
     "@upstash/redis": "^1.35.7",
+    "@vercel/analytics": "^1.6.1",
     "next": "^14.2.18",
     "next-auth": "^4.24.13",
+    "pino": "^10.1.0",
+    "pino-pretty": "^13.1.3",
     "react": "^18.2.0",
     "react-cookie-consent": "^9.0.0",
     "react-dom": "^18.2.0",
@@ -53,6 +56,7 @@
     "eslint-config-next": "^14.2.18",
     "husky": "^9.1.7",
     "jsdom": "^27.2.0",
+    "lighthouse": "^13.0.1",
     "lint-staged": "^16.2.7",
     "prisma": "^5.22.0",
     "tailwindcss": "^4",

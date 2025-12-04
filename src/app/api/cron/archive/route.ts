@@ -5,6 +5,7 @@ import { Client } from '@upstash/qstash';
 import { prisma } from '@/lib/prisma';
 import { filterUsersWithCircuitBreaker } from '@/lib/circuit-breaker';
 import { chunk } from '@/lib/utils';
+import { logger } from '@/lib/logger';
 
 /**
  * Cron endpoint (triggered hourly by QStash)
@@ -13,8 +14,8 @@ import { chunk } from '@/lib/utils';
  * - Creates batches (50 users per batch)
  * - Queues batch jobs with spread distribution
  */
-async function handler(req: NextRequest) {
-  console.log('[Cron] Starting hourly archival job');
+async function handler(_req: NextRequest) {
+  logger.info('Starting hourly archival job');
 
   try {
     // Fetch active users with tokens
@@ -36,12 +37,15 @@ async function handler(req: NextRequest) {
       ]
     });
 
-    console.log(`[Cron] Found ${activeUsers.length} active users`);
+    logger.info({ activeUserCount: activeUsers.length }, 'Found active users');
 
     // Filter with circuit breaker
     const usersToProcess = filterUsersWithCircuitBreaker(activeUsers);
 
-    console.log(`[Cron] After circuit breaker: ${usersToProcess.length} users to process`);
+    logger.info({
+      usersToProcess: usersToProcess.length,
+      filteredOut: activeUsers.length - usersToProcess.length
+    }, 'Applied circuit breaker filtering');
 
     if (usersToProcess.length === 0) {
       return NextResponse.json({
@@ -54,7 +58,7 @@ async function handler(req: NextRequest) {
     // Create batches (50 users per batch)
     const batches = chunk(usersToProcess, 50);
 
-    console.log(`[Cron] Created ${batches.length} batches`);
+    logger.info({ batchCount: batches.length }, 'Created batches');
 
     // Initialize QStash client
     const qstash = new Client({
@@ -80,7 +84,12 @@ async function handler(req: NextRequest) {
         delay: delay > 0 ? delay : undefined // Only add delay if > 0
       });
 
-      console.log(`[Cron] Queued batch ${i + 1}/${batches.length} with ${batches[i].length} users (delay: ${delay}s)`);
+      logger.debug({
+        batchNumber: i + 1,
+        totalBatches: batches.length,
+        userCount: batches[i].length,
+        delaySeconds: delay
+      }, 'Queued batch');
     }
 
     return NextResponse.json({
@@ -91,25 +100,17 @@ async function handler(req: NextRequest) {
       filteredOut: activeUsers.length - usersToProcess.length
     });
 
-  } catch (error: any) {
-    console.error('[Cron] Error in archival job:', error);
+  } catch (error: unknown) {
+    logger.error({ err: error }, 'Error in archival cron job');
+    const message = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { error: 'Cron job failed', message: error.message },
+      { error: 'Cron job failed', message },
       { status: 500 }
     );
   }
 }
 
-// Wrap with QStash signature verification
-export const POST = verifySignatureAppRouter(handler);
-
-// Allow GET for manual testing (remove in production)
-export async function GET(req: NextRequest) {
-  // Check for auth header or secret for manual triggers
-  const authHeader = req.headers.get('authorization');
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  return handler(req);
-}
+// Wrap with QStash signature verification (only if QStash is configured)
+export const POST = process.env.QSTASH_CURRENT_SIGNING_KEY
+  ? verifySignatureAppRouter(handler)
+  : handler;

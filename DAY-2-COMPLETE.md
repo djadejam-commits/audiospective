@@ -357,7 +357,7 @@ Before deploying to production, user must:
 # 1. Sign up for Neon (free tier)
 https://neon.tech
 
-# 2. Create project: "spotify-time-machine"
+# 2. Create project: "audiospective"
 
 # 3. Copy connection string to .env
 DATABASE_URL="postgresql://..."
@@ -371,7 +371,7 @@ DATABASE_URL="postgresql://..."
 # 1. Sign up for Sentry (free tier)
 https://sentry.io
 
-# 2. Create project: "spotify-time-machine"
+# 2. Create project: "audiospective"
 
 # 3. Add to .env
 NEXT_PUBLIC_SENTRY_DSN="https://..."

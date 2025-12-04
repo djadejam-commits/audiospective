@@ -1,5 +1,5 @@
 # Brainstorming Session Results
-## Architectural & Product Risks for Spotify Time Machine MVP
+## Architectural & Product Risks for Audiospective MVP
 
 **Session Date:** 2025-11-27
 **Facilitator:** Business Analyst Mary
@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-**Topic:** Architectural & Product Risks for Spotify Time Machine MVP
+**Topic:** Architectural & Product Risks for Audiospective MVP
 
 **Session Goals:** Identify "Silent Killer" risks (non-obvious, MVP-threatening) across Stories #1-3, with emphasis on One-Way Door architectural decisions
 
@@ -345,7 +345,7 @@ This directly contradicts the "Passive Retention" philosophy (good thing that us
 **Mitigation: "The Dead Man's Switch"**
 ```typescript
 // If token fails for 24 consecutive hours, send ONE transactional email:
-// "Spotify Time Machine has disconnected. Click here to resume archival."
+// "Audiospective has disconnected. Click here to resume archival."
 //
 // Note: Transactional system alerts are GDPR compliant (Legitimate Interest)
 // even without marketing opt-in
@@ -617,7 +617,7 @@ if (failures.length > 0) {
 
 **Update Date:** 2025-11-27 (Post Tasks #3-4 completion)
 
-Following the Market Research and Competitor Analysis sessions, we discovered **10 production-proven patterns** from 2 live implementations (jjsizemore/spotify-time-machine + ytmusic-scrobbler-web) that directly address our identified risks. This section documents how Tasks #3-4 de-risked the project.
+Following the Market Research and Competitor Analysis sessions, we discovered **10 production-proven patterns** from 2 live implementations (jjsizemore/audiospective + ytmusic-scrobbler-web) that directly address our identified risks. This section documents how Tasks #3-4 de-risked the project.
 
 ### Risks Now MITIGATED with Proven Patterns
 
@@ -629,7 +629,7 @@ Following the Market Research and Competitor Analysis sessions, we discovered **
 - **Pattern #1:** 5-minute proactive token refresh buffer (jjsizemore)
   - Refresh tokens BEFORE expiration (not at expiration)
   - Prevents mid-job token expiration that causes timeout loops
-  - **File:** `/tmp/spotify-time-machine/src/app/api/auth/[...nextauth]/route.ts`
+  - **File:** `/tmp/audiospective/src/app/api/auth/[...nextauth]/route.ts`
 
 - **Pattern #2:** Circuit breaker with failure-type-specific cooldowns (ytmusic-scrobbler)
   - AUTH failures: 30min base cooldown, max 4 hours

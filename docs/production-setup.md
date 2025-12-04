@@ -4,7 +4,7 @@ This guide explains how to set up the background polling system for automatic li
 
 ## Overview
 
-The Spotify Time Machine uses **Upstash QStash** (serverless job queue) and **Upstash Redis** (idempotency tracking) to automatically archive users' listening history every hour.
+The Audiospective uses **Upstash QStash** (serverless job queue) and **Upstash Redis** (idempotency tracking) to automatically archive users' listening history every hour.
 
 ## Architecture
 
@@ -29,7 +29,7 @@ Redis is used for idempotency keys to prevent duplicate archival runs.
 
 1. Go to https://console.upstash.com/redis
 2. Click "Create Database"
-3. Choose a name (e.g., "spotify-time-machine")
+3. Choose a name (e.g., "audiospective")
 4. Select a region close to your deployment
 5. Click "Create"
 6. Copy the following credentials:

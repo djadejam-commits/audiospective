@@ -115,6 +115,8 @@ model Track {
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
 
+  // Performance: Index for album joins in stats queries
+  @@index([albumId])
   @@map("tracks")
 }
 
@@ -132,6 +134,9 @@ model PlayEvent {
 
   // DEDUPLICATION: Prevents duplicate play events
   @@unique([userId, trackId, playedAt])
-  @@index([userId, playedAt(sort: Desc)])
+  // Performance: Indexes for common queries
+  @@index([userId, playedAt(sort: Desc)]) // For recent plays, activity queries
+  @@index([trackId]) // For groupBy top tracks queries
+  @@index([userId, trackId]) // For user-specific track queries
   @@map("play_events")
 }

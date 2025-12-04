@@ -1,5 +1,5 @@
 # 14-Day Production Readiness Plan
-**Spotify Time Machine - Path to Launch**
+**Audiospective - Path to Launch**
 
 **Plan Created:** December 3, 2025
 **Target Launch Date:** December 17, 2025
@@ -9,7 +9,7 @@
 
 ## Overview
 
-This plan transforms the Spotify Time Machine from "almost ready" to "production ready" in 14 days through systematic fixes prioritized by risk and impact.
+This plan transforms the Audiospective from "almost ready" to "production ready" in 14 days through systematic fixes prioritized by risk and impact.
 
 **Key Milestones:**
 - **Day 7:** Critical blockers resolved, deployable but not launched
@@ -834,7 +834,7 @@ This 14-day plan provides a **realistic, systematic path to production** that ad
 4. **Flexibility** - Use buffer days when needed
 5. **Team rest** - Avoid burnout, pace yourself
 
-**With this plan, the Spotify Time Machine will launch successfully on Day 14 with confidence. 🚀**
+**With this plan, the Audiospective will launch successfully on Day 14 with confidence. 🚀**
 
 ---
 

@@ -1,4 +1,4 @@
-# Project Brief: Spotify Time Machine
+# Project Brief: Audiospective
 
 > **Version:** 2.0
 > **Status:** In Development (Transitioning MAP → ACTION)
@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-**Spotify Time Machine** is an "Always-on Wrapped" web application that provides Spotify users with instant insights into their listening habits while continuously archiving their play history in the background to prevent data loss.
+**Audiospective** is an "Always-on Wrapped" web application that provides Spotify users with instant insights into their listening habits while continuously archiving their play history in the background to prevent data loss.
 
 The product solves a critical gap in Spotify's ecosystem: users can only access their annual "Wrapped" summary once a year, and historical listening data older than 50 tracks is inaccessible through Spotify's standard interface. This creates anxiety about losing personal music history and eliminates opportunities for year-round self-discovery.
 
@@ -65,7 +65,7 @@ The "Quantified Self" movement is growing, and music listening is one of the mos
 
 ### Core Concept & Approach
 
-**Spotify Time Machine** is a Next.js web application that operates on a **dual-mode architecture:**
+**Audiospective** is a Next.js web application that operates on a **dual-mode architecture:**
 
 1. **Instant Gratification Layer** (Frontend) - When users log in, they immediately see their "Current Vibe" dashboard pulling live data directly from Spotify's API (top artists, current listening trends, real-time stats).
 
@@ -81,7 +81,7 @@ _[Diagram would show two parallel streams:_
 
 ### Key Differentiators from Existing Solutions
 
-| Feature | Spotify Time Machine | Last.fm | Stats for Spotify |
+| Feature | Audiospective | Last.fm | Stats for Spotify |
 |---------|---------------------|---------|-------------------|
 | **Zero-setup archival** | ✅ Automatic after OAuth | ❌ Requires per-device scrobbling | ❌ No archival |
 | **Device-agnostic** | ✅ Server-side API polling | ❌ Client-side only | ✅ API-based |
@@ -513,7 +513,7 @@ _[Gantt chart would show:_
 
 **"The Music Memory Bank"**
 
-In 2-3 years, Spotify Time Machine becomes the definitive personal music archive platform:
+In 2-3 years, Audiospective becomes the definitive personal music archive platform:
 
 **1. Cross-Platform Expansion (Contingent on Technical Validation)**
 - **Phase 2 Technical Spike:** Investigate Apple Music Kit API capabilities for historical data access
@@ -1314,7 +1314,7 @@ _[2x2 matrix would show:_
 #### Project Setup
 - [ ] **Initialize Next.js project**
   ```bash
-  npx create-next-app@latest spotify-time-machine --typescript --tailwind --app
+  npx create-next-app@latest audiospective --typescript --tailwind --app
   ```
 
 - [ ] **Set up GitHub repository**
@@ -1601,5 +1601,5 @@ _[2x2 matrix would show:_
 
 ---
 
-*This document serves as the definitive guide for building Spotify Time Machine MVP. Refer to `docs/MASTER.md` for the consolidated technical architecture and `docs/02_map/` for detailed PRD/architecture specifications.*
+*This document serves as the definitive guide for building Audiospective MVP. Refer to `docs/MASTER.md` for the consolidated technical architecture and `docs/02_map/` for detailed PRD/architecture specifications.*
 

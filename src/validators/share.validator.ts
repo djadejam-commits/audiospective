@@ -25,12 +25,7 @@ export const createShareSchema = z.object({
     .optional()
     .nullable(),
 
-  dateRange: z
-    .enum(['today', '7d', '30d', 'all'], {
-      errorMap: () => ({ message: 'Invalid date range. Must be: today, 7d, 30d, or all' })
-    })
-    .optional()
-    .default('all')
+  dateRange: z.enum(['today', '7d', '30d', 'all']).optional().default('all')
 });
 
 export const getShareSchema = z.object({

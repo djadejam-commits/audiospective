@@ -8,7 +8,7 @@
 
 ## Overview
 
-Day 5 focused on establishing legal compliance and GDPR-ready documentation. All deliverables from the 14-day production plan have been successfully completed, making Spotify Time Machine legally compliant for EU operation.
+Day 5 focused on establishing legal compliance and GDPR-ready documentation. All deliverables from the 14-day production plan have been successfully completed, making Audiospective legally compliant for EU operation.
 
 ---
 
@@ -19,7 +19,7 @@ Day 5 focused on establishing legal compliance and GDPR-ready documentation. All
 
 **Content:**
 - Standard MIT License
-- Copyright 2025 Spotify Time Machine
+- Copyright 2025 Audiospective
 - Full permission grant for use, modification, distribution
 
 **Why Important:**
@@ -110,7 +110,7 @@ Day 5 focused on establishing legal compliance and GDPR-ready documentation. All
 - Resale of access
 
 #### Intellectual Property (Section 6)
-- Service ownership by Spotify Time Machine
+- Service ownership by Audiospective
 - User license (limited, non-exclusive, non-transferable)
 - User data ownership retained by users
 - Spotify content owned by Spotify AB
@@ -154,7 +154,7 @@ Day 5 focused on establishing legal compliance and GDPR-ready documentation. All
 - **Cookie duration:** 365 days
 - **Styling:** Spotify-themed (black background, green buttons)
 - **Privacy Policy link:** Direct link to PRIVACY_POLICY.md
-- **Cookie storage:** `spotify-time-machine-cookie-consent`
+- **Cookie storage:** `audiospective-cookie-consent`
 
 **Callbacks:**
 ```typescript
@@ -305,7 +305,7 @@ GET /api/export?gdpr=true&format=json
 
 **Export Format:**
 - Machine-readable JSON
-- Filename: `spotify-time-machine-gdpr-export-2025-12-04.json`
+- Filename: `audiospective-gdpr-export-2025-12-04.json`
 - All data properly structured and typed
 - No sensitive tokens included
 
@@ -636,7 +636,7 @@ According to the 14-day plan:
 
 ## Conclusion
 
-Day 5 successfully established legal compliance and GDPR readiness for Spotify Time Machine. The implementation includes:
+Day 5 successfully established legal compliance and GDPR readiness for Audiospective. The implementation includes:
 
 ✅ Comprehensive legal documentation (LICENSE, Privacy Policy, Terms of Service)
 ✅ EU Cookie Law compliant consent banner

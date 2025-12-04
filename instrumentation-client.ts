@@ -49,7 +49,7 @@ Sentry.init({
   replaysOnErrorSampleRate: 1.0, // 100% of sessions with errors
 
   // Filter out sensitive data
-  beforeSend(event, hint) {
+  beforeSend(event, _hint) {
     // Remove sensitive headers
     if (event.request?.headers) {
       delete event.request.headers['authorization'];
@@ -57,7 +57,7 @@ Sentry.init({
     }
 
     // Remove sensitive query params
-    if (event.request?.query_string) {
+    if (event.request?.query_string && typeof event.request.query_string === 'string') {
       event.request.query_string = event.request.query_string
         .replace(/token=[^&]+/gi, 'token=[REDACTED]')
         .replace(/secret=[^&]+/gi, 'secret=[REDACTED]');

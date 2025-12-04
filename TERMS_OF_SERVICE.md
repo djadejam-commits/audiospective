@@ -5,17 +5,17 @@
 
 ## 1. Acceptance of Terms
 
-Welcome to Spotify Time Machine ("Service," "we," "our," or "us").
+Welcome to Audiospective ("Service," "we," "our," or "us").
 
-By accessing or using Spotify Time Machine, you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, do not use the Service.
+By accessing or using Audiospective, you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, do not use the Service.
 
-These Terms constitute a legally binding agreement between you ("User," "you," or "your") and Spotify Time Machine.
+These Terms constitute a legally binding agreement between you ("User," "you," or "your") and Audiospective.
 
 ---
 
 ## 2. Description of Service
 
-Spotify Time Machine is a web application that:
+Audiospective is a web application that:
 
 - Connects to your Spotify account to retrieve listening history
 - Archives your listening data over time
@@ -23,7 +23,7 @@ Spotify Time Machine is a web application that:
 - Allows you to view trends in your listening habits
 - Enables you to create and share listening reports
 
-**Important:** Spotify Time Machine is an independent service and is not affiliated with, endorsed by, or sponsored by Spotify AB.
+**Important:** Audiospective is an independent service and is not affiliated with, endorsed by, or sponsored by Spotify AB.
 
 ---
 
@@ -117,7 +117,7 @@ Violation of these Terms may result in:
 
 ### 6.1 Service Ownership
 
-The Service, including all software, designs, text, graphics, and other content, is owned by Spotify Time Machine and protected by copyright, trademark, and other intellectual property laws.
+The Service, including all software, designs, text, graphics, and other content, is owned by Audiospective and protected by copyright, trademark, and other intellectual property laws.
 
 ### 6.2 Your License to Use
 
@@ -258,7 +258,7 @@ Some jurisdictions do not allow limitation of liability for personal injury or c
 
 ## 10. Indemnification
 
-You agree to indemnify, defend, and hold harmless Spotify Time Machine, its officers, directors, employees, and agents from any claims, damages, losses, liabilities, and expenses (including legal fees) arising from:
+You agree to indemnify, defend, and hold harmless Audiospective, its officers, directors, employees, and agents from any claims, damages, losses, liabilities, and expenses (including legal fees) arising from:
 
 - Your use of the Service
 - Your violation of these Terms
@@ -368,7 +368,7 @@ If you do not agree to the changes:
 
 ### 15.1 Entire Agreement
 
-These Terms, together with the Privacy Policy, constitute the entire agreement between you and Spotify Time Machine.
+These Terms, together with the Privacy Policy, constitute the entire agreement between you and Audiospective.
 
 ### 15.2 Severability
 
@@ -441,7 +441,7 @@ You agree to comply with all export control laws. You may not use the Service if
 
 ## Acknowledgment
 
-By using Spotify Time Machine, you acknowledge that:
+By using Audiospective, you acknowledge that:
 
 - You have read and understood these Terms
 - You agree to be bound by these Terms
@@ -451,7 +451,7 @@ By using Spotify Time Machine, you acknowledge that:
 
 ---
 
-**Spotify Time Machine Terms of Service - Version 1.0**
+**Audiospective Terms of Service - Version 1.0**
 **Effective Date:** December 4, 2025
 
 ---

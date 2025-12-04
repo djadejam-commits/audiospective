@@ -79,7 +79,7 @@ export async function DELETE() {
     // if (user.email) {
     //   await sendEmail({
     //     to: user.email,
-    //     subject: 'Your Spotify Time Machine account has been deleted',
+    //     subject: 'Your Audiospective account has been deleted',
     //     body: `
     //       Your account and all associated data have been permanently deleted.
     //
@@ -90,7 +90,7 @@ export async function DELETE() {
     //
     //       This action cannot be undone. If you created a new account, it will be treated as a new user.
     //
-    //       Thank you for using Spotify Time Machine.
+    //       Thank you for using Audiospective.
     //     `,
     //   });
     // }

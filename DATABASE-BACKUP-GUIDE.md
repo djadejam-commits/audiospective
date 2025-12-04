@@ -113,7 +113,7 @@ backups/
 crontab -e
 
 # Add this line (runs daily at 3 AM)
-0 3 * * * cd /path/to/spotify-time-machine && ./scripts/backup-database.sh >> logs/backup.log 2>&1
+0 3 * * * cd /path/to/audiospective && ./scripts/backup-database.sh >> logs/backup.log 2>&1
 ```
 
 **Using GitHub Actions:**
