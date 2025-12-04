@@ -83,3 +83,10 @@ Sentry.init({
     'Request aborted',
   ],
 });
+
+/**
+ * Router transition tracking
+ *
+ * Captures navigation events for better performance monitoring
+ */
+export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;

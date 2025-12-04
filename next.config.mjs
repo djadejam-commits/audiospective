@@ -125,14 +125,30 @@ const nextConfig = {
 /**
  * Sentry Integration
  *
- * To enable Sentry:
- * 1. Set up Sentry account and add NEXT_PUBLIC_SENTRY_DSN to .env
- * 2. Uncomment the withSentryConfig wrapper below
- * 3. See SENTRY-SETUP.md for detailed instructions
+ * Sentry is now enabled! It will:
+ * - Capture errors in development and production
+ * - Upload source maps for better debugging
+ * - Track performance metrics
+ *
+ * See SENTRY-SETUP.md for detailed configuration options
  */
 
-export default nextConfig;
+import { withSentryConfig } from '@sentry/nextjs';
 
-// Uncomment this when Sentry is configured:
-// import { withSentryConfig } from '@sentry/nextjs';
-// export default withSentryConfig(nextConfig, { silent: true });
+export default withSentryConfig(
+  nextConfig,
+  {
+    // Sentry webpack plugin options
+    silent: true, // Suppresses source map upload logs
+    org: process.env.SENTRY_ORG,
+    project: process.env.SENTRY_PROJECT,
+    authToken: process.env.SENTRY_AUTH_TOKEN,
+  },
+  {
+    // Additional config options
+    widenClientFileUpload: true,
+    transpileClientSDK: true,
+    hideSourceMaps: true,
+    disableLogger: true,
+  }
+);
