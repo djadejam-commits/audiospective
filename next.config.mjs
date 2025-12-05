@@ -51,7 +51,7 @@ const nextConfig = {
               "default-src 'self'",
               "script-src 'self' 'unsafe-eval' 'unsafe-inline'", // unsafe-inline needed for Next.js
               "style-src 'self' 'unsafe-inline'", // unsafe-inline needed for Tailwind
-              "img-src 'self' https://i.scdn.co https://*.spotifycdn.com data: blob:", // Spotify images
+              "img-src 'self' https://i.scdn.co https://*.spotifycdn.com https://*.fbcdn.net data: blob:", // Spotify images + profile pics
               "font-src 'self' data:",
               "connect-src 'self' https://api.spotify.com https://accounts.spotify.com https://*.upstash.io https://*.sentry.io", // API endpoints
               "media-src 'self'",

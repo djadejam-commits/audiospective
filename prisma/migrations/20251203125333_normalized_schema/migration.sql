@@ -5,9 +5,7 @@
 
 */
 -- DropTable
-PRAGMA foreign_keys=off;
-DROP TABLE "play_history";
-PRAGMA foreign_keys=on;
+DROP TABLE IF EXISTS "play_history";
 
 -- CreateTable
 CREATE TABLE "artists" (
@@ -15,8 +13,8 @@ CREATE TABLE "artists" (
     "spotify_id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "genres" TEXT NOT NULL DEFAULT '',
-    "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" DATETIME NOT NULL
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL
 );
 
 -- CreateTable
@@ -25,8 +23,8 @@ CREATE TABLE "albums" (
     "spotify_id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "image_url" TEXT,
-    "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" DATETIME NOT NULL
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL
 );
 
 -- CreateTable
@@ -36,8 +34,8 @@ CREATE TABLE "tracks" (
     "name" TEXT NOT NULL,
     "duration_ms" INTEGER NOT NULL,
     "album_id" TEXT,
-    "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" DATETIME NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
     CONSTRAINT "tracks_album_id_fkey" FOREIGN KEY ("album_id") REFERENCES "albums" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
 
@@ -46,8 +44,8 @@ CREATE TABLE "play_events" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "user_id" TEXT NOT NULL,
     "track_id" TEXT NOT NULL,
-    "played_at" DATETIME NOT NULL,
-    "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "played_at" TIMESTAMP(3) NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "play_events_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "play_events_track_id_fkey" FOREIGN KEY ("track_id") REFERENCES "tracks" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );

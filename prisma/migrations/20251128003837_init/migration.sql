@@ -8,16 +8,16 @@ CREATE TABLE "users" (
     "refresh_token" TEXT,
     "access_token" TEXT,
     "token_expires_at" INTEGER,
-    "last_polled_at" DATETIME,
+    "last_polled_at" TIMESTAMP(3),
     "is_active" BOOLEAN NOT NULL DEFAULT true,
-    "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" DATETIME NOT NULL,
-    "last_successful_scrobble" DATETIME,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+    "last_successful_scrobble" TIMESTAMP(3),
     "consecutive_failures" INTEGER NOT NULL DEFAULT 0,
     "last_failure_type" TEXT,
-    "last_failed_at" DATETIME,
+    "last_failed_at" TIMESTAMP(3),
     "auth_notification_count" INTEGER NOT NULL DEFAULT 0,
-    "last_notification_sent" DATETIME,
+    "last_notification_sent" TIMESTAMP(3),
     "subscription_plan" TEXT NOT NULL DEFAULT 'free',
     "founding_member_number" INTEGER
 );
@@ -27,7 +27,7 @@ CREATE TABLE "play_history" (
     "id" BIGINT NOT NULL PRIMARY KEY,
     "user_id" TEXT NOT NULL,
     "track_id" TEXT NOT NULL,
-    "played_at" DATETIME NOT NULL,
+    "played_at" TIMESTAMP(3) NOT NULL,
     "track_metadata" TEXT,
     CONSTRAINT "play_history_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
