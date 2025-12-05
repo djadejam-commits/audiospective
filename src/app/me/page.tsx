@@ -48,6 +48,12 @@ export default function ProfilePage() {
         fetch('/api/analytics/diversity?range=all')
       ]);
 
+      // Check if any responses failed (401, 500, etc.)
+      if (!statsRes.ok || !streaksRes.ok || !diversityRes.ok) {
+        console.error('One or more API requests failed');
+        return;
+      }
+
       const [statsData, streaksData, diversityData] = await Promise.all([
         statsRes.json(),
         streaksRes.json(),

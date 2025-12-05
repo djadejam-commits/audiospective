@@ -76,7 +76,7 @@ export default function DashboardPage() {
   const [comparison, setComparison] = useState<Comparison | null>(null);
   const [loading, setLoading] = useState(true);
   const [dateRange, setDateRange] = useState<DateRange>('7d');
-  const [shareUrl, setShareUrl] = useState<string | null>(null);
+  const [_shareUrl, setShareUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === 'authenticated') {
@@ -104,6 +104,14 @@ export default function DashboardPage() {
       }
 
       const responses = await Promise.all(requests);
+
+      // Check if any responses failed (401, 500, etc.)
+      const hasError = responses.some(r => !r.ok);
+      if (hasError) {
+        console.error('One or more API requests failed');
+        return;
+      }
+
       const data = await Promise.all(responses.map(r => r.json()));
 
       setStats(data[0]);
