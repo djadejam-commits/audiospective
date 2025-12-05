@@ -43,16 +43,16 @@ export async function GET(req: NextRequest) {
           }>
         >`
           SELECT
-            "Artist"."id" as "artistId",
-            "Artist"."spotifyId",
-            "Artist"."name",
+            "artists"."id" as "artistId",
+            "artists"."spotify_id" as "spotifyId",
+            "artists"."name",
             COUNT(*) as "playCount"
-          FROM "PlayEvent"
-          INNER JOIN "Track" ON "PlayEvent"."trackId" = "Track"."id"
-          INNER JOIN "_ArtistToTrack" ON "Track"."id" = "_ArtistToTrack"."B"
-          INNER JOIN "Artist" ON "_ArtistToTrack"."A" = "Artist"."id"
-          WHERE "PlayEvent"."userId" = ${userId}
-          GROUP BY "Artist"."id", "Artist"."spotifyId", "Artist"."name"
+          FROM "play_events"
+          INNER JOIN "tracks" ON "play_events"."track_id" = "tracks"."id"
+          INNER JOIN "_TrackArtists" ON "tracks"."id" = "_TrackArtists"."B"
+          INNER JOIN "artists" ON "_TrackArtists"."A" = "artists"."id"
+          WHERE "play_events"."user_id" = ${userId}
+          GROUP BY "artists"."id", "artists"."spotify_id", "artists"."name"
           ORDER BY "playCount" DESC
           LIMIT ${limit}
         `;

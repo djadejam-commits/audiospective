@@ -55,21 +55,21 @@ export async function GET(_req: NextRequest) {
           // Unique artists - optimized with direct database query
           // Avoid N+1 by using SQL aggregation
           prisma.$queryRaw<Array<{ count: bigint }>>`
-            SELECT COUNT(DISTINCT "Artist"."id") as count
-            FROM "PlayEvent"
-            INNER JOIN "Track" ON "PlayEvent"."trackId" = "Track"."id"
-            INNER JOIN "_ArtistToTrack" ON "Track"."id" = "_ArtistToTrack"."B"
-            INNER JOIN "Artist" ON "_ArtistToTrack"."A" = "Artist"."id"
-            WHERE "PlayEvent"."userId" = ${userId}
+            SELECT COUNT(DISTINCT "artists"."id") as count
+            FROM "play_events"
+            INNER JOIN "tracks" ON "play_events"."track_id" = "tracks"."id"
+            INNER JOIN "_TrackArtists" ON "tracks"."id" = "_TrackArtists"."B"
+            INNER JOIN "artists" ON "_TrackArtists"."A" = "artists"."id"
+            WHERE "play_events"."user_id" = ${userId}
           `.then(result => Number(result[0]?.count || 0)),
 
           // Unique albums - optimized with direct database query
           prisma.$queryRaw<Array<{ count: bigint }>>`
-            SELECT COUNT(DISTINCT "Track"."albumId") as count
-            FROM "PlayEvent"
-            INNER JOIN "Track" ON "PlayEvent"."trackId" = "Track"."id"
-            WHERE "PlayEvent"."userId" = ${userId}
-            AND "Track"."albumId" IS NOT NULL
+            SELECT COUNT(DISTINCT "tracks"."album_id") as count
+            FROM "play_events"
+            INNER JOIN "tracks" ON "play_events"."track_id" = "tracks"."id"
+            WHERE "play_events"."user_id" = ${userId}
+            AND "tracks"."album_id" IS NOT NULL
           `.then(result => Number(result[0]?.count || 0)),
 
           // First play
