@@ -55,6 +55,7 @@ const nextConfig = {
               "font-src 'self' data:",
               "connect-src 'self' https://api.spotify.com https://accounts.spotify.com https://*.upstash.io https://*.sentry.io", // API endpoints
               "media-src 'self'",
+              "worker-src 'self' blob:", // Allow Sentry web workers
               "object-src 'none'",
               "frame-ancestors 'none'", // Prevent embedding
               "base-uri 'self'",
