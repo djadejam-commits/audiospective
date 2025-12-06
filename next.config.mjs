@@ -45,6 +45,7 @@ const nextConfig = {
             value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()'
           },
           // Content Security Policy (CSP)
+          // Updated: 2025-12-06 - Fixed worker-src for Sentry web workers
           {
             key: 'Content-Security-Policy',
             value: [
@@ -55,7 +56,7 @@ const nextConfig = {
               "font-src 'self' data:",
               "connect-src 'self' https://api.spotify.com https://accounts.spotify.com https://*.upstash.io https://*.sentry.io", // API endpoints
               "media-src 'self'",
-              "worker-src 'self' blob:", // Allow Sentry web workers
+              "worker-src 'self' blob:", // CRITICAL: Allow Sentry web workers to prevent CSP violations
               "object-src 'none'",
               "frame-ancestors 'none'", // Prevent embedding
               "base-uri 'self'",
