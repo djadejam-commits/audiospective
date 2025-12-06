@@ -60,7 +60,7 @@ const nextConfig = {
               "object-src 'none'",
               "frame-ancestors 'none'", // Prevent embedding
               "base-uri 'self'",
-              "form-action 'self' http://localhost:3000 http://127.0.0.1:3000 https://*.vercel.app",
+              "form-action 'self' http://localhost:3000 http://localhost:3001 http://127.0.0.1:3000 http://127.0.0.1:3001 https://*.vercel.app",
               ...(process.env.NODE_ENV === 'production' ? ["upgrade-insecure-requests"] : []), // Only upgrade in production
               "report-uri /api/csp-report" // Send CSP violations to Sentry for monitoring
             ].filter(Boolean).join('; ')
