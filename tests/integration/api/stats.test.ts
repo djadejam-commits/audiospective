@@ -1,4 +1,10 @@
 // tests/integration/api/stats.test.ts
+/**
+ * Integration tests for /api/stats
+ *
+ * Prevents regression of INC-2025-12-05-001 (SQL table name mismatch)
+ * Tests verify correct PostgreSQL table names are used in raw SQL queries
+ */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { GET } from '@/app/api/stats/route';
 import { NextRequest } from 'next/server';
@@ -14,7 +20,8 @@ vi.mock('@/lib/prisma', () => ({
       count: vi.fn(),
       findMany: vi.fn(),
       findFirst: vi.fn()
-    }
+    },
+    $queryRaw: vi.fn()
   }
 }));
 
@@ -37,6 +44,64 @@ describe('GET /api/stats', () => {
     expect(data.error).toBe('Not authenticated');
   });
 
+  it('should use correct PostgreSQL table names in raw SQL', async () => {
+    (getServerSession as any).mockResolvedValue({
+      user: { id: 'user1', name: 'Test User', email: 'test@example.com' }
+    });
+
+    // Mock all the queries
+    (prisma.playEvent.count as any).mockResolvedValue(100);
+    (prisma.playEvent.findMany as any).mockResolvedValue([
+      { trackId: 'track1' },
+      { trackId: 'track2' }
+    ]);
+
+    // Mock $queryRaw for unique artists and albums
+    (prisma.$queryRaw as any)
+      .mockResolvedValueOnce([{ count: BigInt(5) }]) // unique artists
+      .mockResolvedValueOnce([{ count: BigInt(3) }]); // unique albums
+
+    (prisma.playEvent.findFirst as any)
+      .mockResolvedValueOnce({ playedAt: new Date('2024-01-01') })
+      .mockResolvedValueOnce({ playedAt: new Date('2024-01-10') });
+
+    const req = new NextRequest('http://localhost:3000/api/stats');
+    await GET(req);
+
+    // Verify $queryRaw was called
+    expect(prisma.$queryRaw).toHaveBeenCalledTimes(2);
+
+    // Check unique artists query
+    const artistsQueryCall = (prisma.$queryRaw as any).mock.calls[0];
+    const artistsQuery = artistsQueryCall[0].toString();
+
+    // CRITICAL: Must use snake_case table names (INC-2025-12-05-001 prevention)
+    expect(artistsQuery).toContain('play_events'); // NOT "PlayEvent"
+    expect(artistsQuery).toContain('tracks'); // NOT "Track"
+    expect(artistsQuery).toContain('artists'); // NOT "Artist"
+    expect(artistsQuery).toContain('_TrackArtists'); // NOT "_ArtistToTrack"
+
+    // CRITICAL: Must use snake_case column names
+    expect(artistsQuery).toContain('track_id'); // NOT "trackId"
+    expect(artistsQuery).toContain('user_id'); // NOT "userId"
+
+    // Check unique albums query
+    const albumsQueryCall = (prisma.$queryRaw as any).mock.calls[1];
+    const albumsQuery = albumsQueryCall[0].toString();
+
+    expect(albumsQuery).toContain('play_events');
+    expect(albumsQuery).toContain('tracks');
+    expect(albumsQuery).toContain('album_id');
+    expect(albumsQuery).toContain('user_id');
+
+    // Should NOT contain PascalCase table names
+    expect(artistsQuery).not.toContain('"PlayEvent"');
+    expect(artistsQuery).not.toContain('"Track"');
+    expect(artistsQuery).not.toContain('"Artist"');
+    expect(albumsQuery).not.toContain('"PlayEvent"');
+    expect(albumsQuery).not.toContain('"Track"');
+  });
+
   it('should return user stats when authenticated', async () => {
     (getServerSession as any).mockResolvedValue({
       user: { id: 'user1', name: 'Test User', email: 'test@example.com' }
@@ -46,36 +111,16 @@ describe('GET /api/stats', () => {
     (prisma.playEvent.count as any).mockResolvedValue(100);
 
     // Mock unique tracks
-    (prisma.playEvent.findMany as any)
-      .mockResolvedValueOnce([
-        { trackId: 'track1' },
-        { trackId: 'track2' },
-        { trackId: 'track3' }
-      ])
-      // Mock unique artists query
-      .mockResolvedValueOnce([
-        {
-          track: {
-            artists: [
-              { id: 'artist1', name: 'Artist 1' },
-              { id: 'artist2', name: 'Artist 2' }
-            ]
-          }
-        },
-        {
-          track: {
-            artists: [
-              { id: 'artist1', name: 'Artist 1' }
-            ]
-          }
-        }
-      ])
-      // Mock unique albums query
-      .mockResolvedValueOnce([
-        { track: { albumId: 'album1' } },
-        { track: { albumId: 'album2' } },
-        { track: { albumId: 'album1' } }
-      ]);
+    (prisma.playEvent.findMany as any).mockResolvedValue([
+      { trackId: 'track1' },
+      { trackId: 'track2' },
+      { trackId: 'track3' }
+    ]);
+
+    // Mock raw SQL queries
+    (prisma.$queryRaw as any)
+      .mockResolvedValueOnce([{ count: BigInt(2) }]) // unique artists
+      .mockResolvedValueOnce([{ count: BigInt(2) }]); // unique albums
 
     // Mock first play
     (prisma.playEvent.findFirst as any)
@@ -95,8 +140,8 @@ describe('GET /api/stats', () => {
     expect(data).toMatchObject({
       totalPlays: 100,
       uniqueTracks: 3,
-      uniqueArtists: 2, // artist1 and artist2
-      uniqueAlbums: 2, // album1 and album2
+      uniqueArtists: 2,
+      uniqueAlbums: 2,
       estimatedListeningHours: expect.any(Number),
       firstPlayAt: expect.any(String),
       lastPlayAt: expect.any(String)
@@ -109,13 +154,13 @@ describe('GET /api/stats', () => {
     });
 
     (prisma.playEvent.count as any).mockResolvedValue(20); // 20 plays * 3 min = 60 min = 1 hour
-    (prisma.playEvent.findMany as any)
-      .mockResolvedValue([])
-      .mockResolvedValue([])
-      .mockResolvedValue([]);
+    (prisma.playEvent.findMany as any).mockResolvedValue([]);
+    (prisma.$queryRaw as any)
+      .mockResolvedValueOnce([{ count: BigInt(0) }])
+      .mockResolvedValueOnce([{ count: BigInt(0) }]);
     (prisma.playEvent.findFirst as any)
-      .mockResolvedValue(null)
-      .mockResolvedValue(null);
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce(null);
 
     const req = new NextRequest('http://localhost:3000/api/stats');
     const response = await GET(req);
@@ -131,9 +176,12 @@ describe('GET /api/stats', () => {
 
     (prisma.playEvent.count as any).mockResolvedValue(0);
     (prisma.playEvent.findMany as any).mockResolvedValue([]);
+    (prisma.$queryRaw as any)
+      .mockResolvedValueOnce([{ count: BigInt(0) }])
+      .mockResolvedValueOnce([{ count: BigInt(0) }]);
     (prisma.playEvent.findFirst as any)
-      .mockResolvedValue(null)
-      .mockResolvedValue(null);
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce(null);
 
     const req = new NextRequest('http://localhost:3000/api/stats');
     const response = await GET(req);
