@@ -5,6 +5,25 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/useToast';
 import { ToastContainer } from '@/components/Toast';
+import Sidebar from '@/components/Sidebar';
+import ActivityHeatmap from '@/components/ActivityHeatmap';
+import FullScreenPlayer from '@/components/FullScreenPlayer';
+import RippleEffect from '@/components/RippleEffect';
+import ParticleField from '@/components/ParticleField';
+import {
+  Play,
+  Download,
+  Share2,
+  TrendingUp,
+  Music,
+  Sparkles,
+  Clock,
+  Calendar,
+  Headphones,
+  Maximize2
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 // [Previous interface definitions remain the same...]
 interface Stats {
@@ -77,6 +96,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [dateRange, setDateRange] = useState<DateRange>('7d');
   const [_shareUrl, setShareUrl] = useState<string | null>(null);
+  const [showPlayer, setShowPlayer] = useState(false);
 
   useEffect(() => {
     if (status === 'authenticated') {
@@ -105,7 +125,6 @@ export default function DashboardPage() {
 
       const responses = await Promise.all(requests);
 
-      // Check if any responses failed (401, 500, etc.)
       const hasError = responses.some(r => !r.ok);
       if (hasError) {
         console.error('One or more API requests failed');
@@ -168,7 +187,6 @@ export default function DashboardPage() {
       const data = await response.json();
       if (data.shareUrl) {
         setShareUrl(data.shareUrl);
-        // Copy to clipboard
         await navigator.clipboard.writeText(data.shareUrl);
         success('Share link copied to clipboard!');
       } else {
@@ -182,62 +200,91 @@ export default function DashboardPage() {
 
   if (status === 'loading' || loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">Loading your music history...</p>
+      <>
+        <Sidebar />
+        <div className="min-h-screen flex items-center justify-center ml-72 relative z-10">
+          <div className="text-center">
+            <div className="w-16 h-16 rounded-full bg-brand-gradient mx-auto mb-6 flex items-center justify-center shadow-neon-cyan animate-pulse">
+              <Music className="w-8 h-8 text-white" />
+            </div>
+            <p className="text-gray-400 text-lg">Loading your sonic universe...</p>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   if (!session) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center p-8">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Sign in Required</h1>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">
-            You need to be signed in to view your dashboard.
-          </p>
-          <Link
-            href="/"
-            className="px-6 py-3 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors"
-          >
-            Go to Home
-          </Link>
+      <>
+        <Sidebar />
+        <div className="min-h-screen flex items-center justify-center p-8 ml-72 relative z-10">
+          <div className="text-center glass-panel p-12 rounded-3xl max-w-md">
+            <div className="w-20 h-20 rounded-full bg-brand-gradient mx-auto mb-6 flex items-center justify-center shadow-neon-purple">
+              <Headphones className="w-10 h-10 text-white" />
+            </div>
+            <h1 className="text-3xl font-bold mb-4 text-gradient">Sign in Required</h1>
+            <p className="text-gray-400 mb-8">
+              Connect your Spotify account to access your personalized audio intelligence dashboard.
+            </p>
+            <Link
+              href="/"
+              className="inline-block px-8 py-3 bg-brand-gradient text-white rounded-full hover:shadow-neon-cyan transition-all font-medium"
+            >
+              Go to Home
+            </Link>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
-  const maxActivityCount = Math.max(...activity.map(a => a.count), 1);
-  const maxHourlyCount = Math.max(...hourlyDistribution, 1);
+  // Prepare chart data
+  const chartData = activity.map(a => ({
+    date: new Date(a.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
+    plays: a.count
+  }));
+
+  const hourlyChartData = hourlyDistribution.map((count, hour) => ({
+    hour: `${hour}:00`,
+    plays: count
+  }));
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-black">
-      {/* Header */}
-      <header className="bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center flex-wrap gap-4">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              🎵 My Music History
-            </h1>
-            <div className="flex gap-2 flex-wrap">
-              {/* Export Dropdown */}
+    <>
+      <Sidebar />
+
+      <main className="flex-1 lg:ml-72 p-4 lg:p-8 z-10 relative min-h-screen pt-20 lg:pt-8">
+        {/* Header */}
+        <header className="mb-8">
+          <div className="flex justify-between items-start flex-wrap gap-6">
+            <div>
+              <h1 className="text-4xl font-bold text-gradient mb-2">
+                Audio Intelligence
+              </h1>
+              <p className="text-gray-400 flex items-center gap-2">
+                <Sparkles className="w-4 h-4" />
+                Welcome back, {session?.user?.name}
+              </p>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-3 flex-wrap">
               <div className="relative group">
-                <button className="px-4 py-2 text-sm bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors">
-                  📥 Export
+                <button className="px-6 py-3 glass-panel rounded-full hover:bg-white/10 transition-all flex items-center gap-2 text-brand-cyan font-medium">
+                  <Download className="w-4 h-4" />
+                  Export
                 </button>
-                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-zinc-800 rounded-lg shadow-lg border border-gray-200 dark:border-zinc-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
+                <div className="absolute right-0 mt-2 w-48 glass-panel rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20 overflow-hidden">
                   <button
                     onClick={() => handleExport('csv')}
-                    className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-t-lg"
+                    className="block w-full text-left px-4 py-3 text-sm hover:bg-white/10 transition-colors"
                   >
                     Export as CSV
                   </button>
                   <button
                     onClick={() => handleExport('json')}
-                    className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-b-lg"
+                    className="block w-full text-left px-4 py-3 text-sm hover:bg-white/10 transition-colors"
                   >
                     Export as JSON
                   </button>
@@ -246,75 +293,73 @@ export default function DashboardPage() {
 
               <button
                 onClick={handleShare}
-                className="px-4 py-2 text-sm bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors"
+                className="px-6 py-3 bg-brand-gradient rounded-full hover:shadow-neon-purple transition-all flex items-center gap-2 font-medium"
               >
-                🔗 Share
+                <Share2 className="w-4 h-4" />
+                Share
               </button>
 
               <Link
                 href="/test"
-                className="px-4 py-2 text-sm border border-green-600 text-green-600 rounded-full hover:bg-green-50 dark:hover:bg-green-950 transition-colors"
+                className="px-6 py-3 glass-panel rounded-full hover:bg-white/10 transition-all flex items-center gap-2 text-brand-green font-medium"
               >
+                <Play className="w-4 h-4" />
                 Run Archive
-              </Link>
-              <Link
-                href="/"
-                className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
-              >
-                Home
               </Link>
             </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Tabs */}
-        <div className="mb-6 flex gap-2 border-b border-gray-200 dark:border-zinc-800">
+        <div className="mb-8 flex gap-3 glass-panel p-2 rounded-2xl inline-flex">
           <button
             onClick={() => setActiveTab('overview')}
-            className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 ${
+            className={cn(
+              "px-6 py-2 rounded-xl text-sm font-medium transition-all",
               activeTab === 'overview'
-                ? 'border-green-600 text-green-600'
-                : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
-            }`}
+                ? 'bg-brand-gradient text-white shadow-neon-cyan'
+                : 'text-gray-400 hover:text-white hover:bg-white/5'
+            )}
           >
             Overview
           </button>
           <button
             onClick={() => setActiveTab('genres')}
-            className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 ${
+            className={cn(
+              "px-6 py-2 rounded-xl text-sm font-medium transition-all",
               activeTab === 'genres'
-                ? 'border-green-600 text-green-600'
-                : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
-            }`}
+                ? 'bg-brand-gradient text-white shadow-neon-cyan'
+                : 'text-gray-400 hover:text-white hover:bg-white/5'
+            )}
           >
             Genres
           </button>
           <button
             onClick={() => setActiveTab('comparison')}
-            className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 ${
+            className={cn(
+              "px-6 py-2 rounded-xl text-sm font-medium transition-all",
               activeTab === 'comparison'
-                ? 'border-green-600 text-green-600'
-                : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
-            }`}
+                ? 'bg-brand-gradient text-white shadow-neon-cyan'
+                : 'text-gray-400 hover:text-white hover:bg-white/5'
+            )}
           >
             Week Comparison
           </button>
         </div>
 
-        {/* Date Range Filter (except for comparison tab) */}
+        {/* Date Range Filter */}
         {activeTab !== 'comparison' && (
-          <div className="mb-6 flex gap-2">
+          <div className="mb-8 flex gap-2">
             {(['1d', '7d', '30d', 'all'] as DateRange[]).map(range => (
               <button
                 key={range}
                 onClick={() => setDateRange(range)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                className={cn(
+                  "px-5 py-2.5 rounded-full text-sm font-medium transition-all",
                   dateRange === range
-                    ? 'bg-green-600 text-white'
-                    : 'bg-white dark:bg-zinc-900 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-800'
-                }`}
+                    ? 'bg-brand-gradient text-white shadow-neon-cyan'
+                    : 'glass-panel text-gray-400 hover:bg-white/10 hover:text-white'
+                )}
               >
                 {range === '1d' && 'Today'}
                 {range === '7d' && 'Last 7 Days'}
@@ -325,34 +370,58 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* Stats Overview */}
+        {/* Stats Grid - Compact Bento Cards */}
         {stats && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <div className="bg-white dark:bg-zinc-900 rounded-lg p-6 border border-gray-200 dark:border-zinc-800">
-              <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Plays</div>
-              <div className="text-3xl font-bold text-gray-900 dark:text-white">
-                {stats.totalPlays.toLocaleString()}
+            <div className="glass-panel rounded-2xl p-6 hover:bg-white/5 transition-all relative overflow-hidden group">
+              <div className="absolute -right-8 -top-8 w-24 h-24 bg-brand-cyan/10 blur-2xl rounded-full" />
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="text-sm text-gray-400">Total Plays</div>
+                  <Play className="w-4 h-4 text-brand-cyan" />
+                </div>
+                <div className="text-4xl font-bold text-white">
+                  {stats.totalPlays.toLocaleString()}
+                </div>
               </div>
             </div>
 
-            <div className="bg-white dark:bg-zinc-900 rounded-lg p-6 border border-gray-200 dark:border-zinc-800">
-              <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Unique Tracks</div>
-              <div className="text-3xl font-bold text-gray-900 dark:text-white">
-                {stats.uniqueTracks.toLocaleString()}
+            <div className="glass-panel rounded-2xl p-6 hover:bg-white/5 transition-all relative overflow-hidden group">
+              <div className="absolute -right-8 -top-8 w-24 h-24 bg-brand-purple/10 blur-2xl rounded-full" />
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="text-sm text-gray-400">Unique Tracks</div>
+                  <Music className="w-4 h-4 text-brand-purple" />
+                </div>
+                <div className="text-4xl font-bold text-white">
+                  {stats.uniqueTracks.toLocaleString()}
+                </div>
               </div>
             </div>
 
-            <div className="bg-white dark:bg-zinc-900 rounded-lg p-6 border border-gray-200 dark:border-zinc-800">
-              <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Unique Artists</div>
-              <div className="text-3xl font-bold text-gray-900 dark:text-white">
-                {stats.uniqueArtists.toLocaleString()}
+            <div className="glass-panel rounded-2xl p-6 hover:bg-white/5 transition-all relative overflow-hidden group">
+              <div className="absolute -right-8 -top-8 w-24 h-24 bg-brand-green/10 blur-2xl rounded-full" />
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="text-sm text-gray-400">Artists</div>
+                  <TrendingUp className="w-4 h-4 text-brand-green" />
+                </div>
+                <div className="text-4xl font-bold text-white">
+                  {stats.uniqueArtists.toLocaleString()}
+                </div>
               </div>
             </div>
 
-            <div className="bg-white dark:bg-zinc-900 rounded-lg p-6 border border-gray-200 dark:border-zinc-800">
-              <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Listening Hours</div>
-              <div className="text-3xl font-bold text-gray-900 dark:text-white">
-                ~{stats.estimatedListeningHours.toLocaleString()}
+            <div className="glass-panel rounded-2xl p-6 hover:bg-white/5 transition-all relative overflow-hidden group">
+              <div className="absolute -right-8 -top-8 w-24 h-24 bg-brand-orange/10 blur-2xl rounded-full" />
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="text-sm text-gray-400">Hours</div>
+                  <Clock className="w-4 h-4 text-brand-orange" />
+                </div>
+                <div className="text-4xl font-bold text-white">
+                  ~{stats.estimatedListeningHours.toLocaleString()}
+                </div>
               </div>
             </div>
           </div>
@@ -361,190 +430,259 @@ export default function DashboardPage() {
         {/* Tab Content */}
         {activeTab === 'overview' && (
           <>
-            {/* Activity Charts - keeping existing code */}
-            {activity.length > 0 && (
-              <div className="bg-white dark:bg-zinc-900 rounded-lg border border-gray-200 dark:border-zinc-800 p-6 mb-8">
-                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-                  Listening Activity
-                </h2>
-                <div className="flex items-end gap-1 h-32">
-                  {activity.map((day) => (
-                    <div key={day.date} className="flex-1 flex flex-col items-center gap-1">
-                      <div
-                        className="w-full bg-green-500 rounded-t transition-all hover:bg-green-600"
-                        style={{
-                          height: `${(day.count / maxActivityCount) * 100}%`,
-                          minHeight: day.count > 0 ? '4px' : '0'
-                        }}
-                        title={`${day.date}: ${day.count} plays`}
-                      />
-                      <div className="text-xs text-gray-500 dark:text-gray-500 rotate-45 origin-top-left mt-2">
-                        {new Date(day.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-                      </div>
-                    </div>
-                  ))}
+            {/* Bento Grid Layout */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+              {/* Large Chart - 2/3 width */}
+              <div className="lg:col-span-2 glass-panel rounded-3xl p-8">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold text-white flex items-center gap-3">
+                    <div className="w-2 h-2 rounded-full bg-brand-cyan shadow-neon-cyan animate-pulse" />
+                    Live Activity Pulse
+                  </h2>
+                  <Calendar className="w-5 h-5 text-gray-500" />
                 </div>
-              </div>
-            )}
 
-            {/* Hourly Distribution */}
-            {hourlyDistribution.some(h => h > 0) && (
-              <div className="bg-white dark:bg-zinc-900 rounded-lg border border-gray-200 dark:border-zinc-800 p-6 mb-8">
-                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+                {chartData.length > 0 ? (
+                  <ResponsiveContainer width="100%" height={300}>
+                    <AreaChart data={chartData}>
+                      <defs>
+                        <linearGradient id="colorPlays" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#22d3ee" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="#22d3ee" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                      <XAxis
+                        dataKey="date"
+                        stroke="#6b7280"
+                        style={{ fontSize: '12px' }}
+                      />
+                      <YAxis
+                        stroke="#6b7280"
+                        style={{ fontSize: '12px' }}
+                      />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: 'rgba(18, 18, 20, 0.9)',
+                          border: '1px solid rgba(255,255,255,0.1)',
+                          borderRadius: '12px',
+                          color: '#fff'
+                        }}
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="plays"
+                        stroke="#22d3ee"
+                        strokeWidth={2}
+                        fill="url(#colorPlays)"
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="h-[300px] flex items-center justify-center text-gray-500">
+                    No activity data available
+                  </div>
+                )}
+              </div>
+
+              {/* Trending Now - 1/3 width */}
+              <div className="glass-panel rounded-3xl p-6">
+                <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-brand-purple" />
+                  Trending Now
+                </h2>
+
+                {topTracks.length === 0 ? (
+                  <p className="text-gray-500 text-sm">No data yet</p>
+                ) : (
+                  <div className="space-y-4">
+                    {topTracks.slice(0, 5).map((item, index) => (
+                      <div key={item.track.id} className="flex items-center gap-3 group">
+                        <div className={cn(
+                          "text-xl font-bold w-6 text-center",
+                          index === 0 ? "text-brand-cyan" :
+                          index === 1 ? "text-brand-purple" :
+                          index === 2 ? "text-brand-green" : "text-gray-600"
+                        )}>
+                          {index + 1}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-semibold text-sm text-white truncate group-hover:text-brand-cyan transition-colors">
+                            {item.track.name}
+                          </div>
+                          <div className="text-xs text-gray-500 truncate">
+                            {item.track.artists.map(a => a.name).join(', ')}
+                          </div>
+                        </div>
+                        <div className="px-2 py-1 rounded-lg bg-brand-gradient/20 text-brand-cyan text-xs font-bold">
+                          {item.playCount}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Hourly Distribution Chart */}
+            {hourlyChartData.some(h => h.plays > 0) && (
+              <div className="glass-panel rounded-3xl p-8 mb-8">
+                <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                  <Clock className="w-6 h-6 text-brand-purple" />
                   Listening Patterns by Hour
                 </h2>
-                <div className="flex items-end gap-1 h-24">
-                  {hourlyDistribution.map((count, hour) => (
-                    <div key={hour} className="flex-1 flex flex-col items-center gap-1">
-                      <div
-                        className="w-full bg-blue-500 rounded-t transition-all hover:bg-blue-600"
-                        style={{
-                          height: `${(count / maxHourlyCount) * 100}%`,
-                          minHeight: count > 0 ? '2px' : '0'
-                        }}
-                        title={`${hour}:00 - ${count} plays`}
-                      />
-                      {hour % 3 === 0 && (
-                        <div className="text-xs text-gray-500 dark:text-gray-500">
-                          {hour}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-                <div className="text-xs text-gray-500 dark:text-gray-500 text-center mt-2">
-                  Hours (24h format)
-                </div>
+                <ResponsiveContainer width="100%" height={200}>
+                  <AreaChart data={hourlyChartData}>
+                    <defs>
+                      <linearGradient id="colorHourly" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#a855f7" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#a855f7" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                    <XAxis
+                      dataKey="hour"
+                      stroke="#6b7280"
+                      style={{ fontSize: '11px' }}
+                    />
+                    <YAxis
+                      stroke="#6b7280"
+                      style={{ fontSize: '12px' }}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'rgba(18, 18, 20, 0.9)',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        borderRadius: '12px',
+                        color: '#fff'
+                      }}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="plays"
+                      stroke="#a855f7"
+                      strokeWidth={2}
+                      fill="url(#colorHourly)"
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
               </div>
             )}
 
-            {/* Recent Plays & Top Lists Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Recent Plays */}
-              <div className="lg:col-span-2">
-                <div className="bg-white dark:bg-zinc-900 rounded-lg border border-gray-200 dark:border-zinc-800 p-6">
-                  <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-                    Recent Plays
-                  </h2>
+            {/* Activity Heatmap */}
+            <ActivityHeatmap className="mb-8" />
+
+            {/* Recent Plays & Top Artists Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Recent Plays - 2/3 */}
+              <div className="lg:col-span-2 glass-panel rounded-3xl p-8 relative overflow-hidden">
+                {/* Background Particles */}
+                <ParticleField particleCount={20} className="opacity-30" />
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-2xl font-bold text-white flex items-center gap-3">
+                      <Play className="w-6 h-6 text-brand-green" />
+                      Recent Plays
+                    </h2>
+                    <RippleEffect>
+                      <button
+                        onClick={() => setShowPlayer(true)}
+                        className="px-4 py-2 glass-panel rounded-xl hover:bg-white/10 transition-all flex items-center gap-2 text-brand-cyan"
+                      >
+                        <Maximize2 className="w-4 h-4" />
+                        <span className="text-sm">Full Player</span>
+                      </button>
+                    </RippleEffect>
+                  </div>
 
                   {recentPlays.length === 0 ? (
                     <div className="text-center py-12">
-                      <p className="text-gray-600 dark:text-gray-400 mb-4">
-                        No listening history yet
-                      </p>
-                      <Link href="/test" className="text-green-600 hover:underline">
+                      <div className="w-16 h-16 rounded-full bg-brand-gradient/20 mx-auto mb-4 flex items-center justify-center">
+                        <Music className="w-8 h-8 text-brand-cyan" />
+                      </div>
+                      <p className="text-gray-500 mb-4">No listening history yet</p>
+                      <Link href="/test" className="text-brand-cyan hover:underline text-sm">
                         Run your first archive →
                       </Link>
                     </div>
                   ) : (
                     <div className="space-y-3">
-                      {recentPlays.map((play) => (
-                        <div
-                          key={play.id}
-                          className="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors"
-                        >
-                          {play.track.album?.imageUrl ? (
-                            <img
-                              src={play.track.album.imageUrl}
-                              alt={play.track.album.name}
-                              className="w-12 h-12 rounded"
-                            />
-                          ) : (
-                            <div className="w-12 h-12 rounded bg-gray-200 dark:bg-zinc-700 flex items-center justify-center">
-                              🎵
-                            </div>
-                          )}
-
-                          <div className="flex-1 min-w-0">
-                            <div className="font-semibold text-gray-900 dark:text-white truncate">
-                              {play.track.name}
-                            </div>
-                            <div className="text-sm text-gray-600 dark:text-gray-400 truncate">
-                              {play.track.artists.map(a => a.name).join(', ')}
-                            </div>
+                      {recentPlays.slice(0, 10).map((play) => (
+                        <RippleEffect key={play.id}>
+                          <div
+                            className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition-all group cursor-pointer"
+                            onClick={() => setShowPlayer(true)}
+                          >
+                        {play.track.album?.imageUrl ? (
+                          <img
+                            src={play.track.album.imageUrl}
+                            alt={play.track.album.name}
+                            className="w-12 h-12 rounded-lg shadow-lg group-hover:shadow-neon-cyan transition-shadow"
+                          />
+                        ) : (
+                          <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-brand-cyan to-brand-purple flex items-center justify-center shadow-lg">
+                            <Music className="w-6 h-6 text-white" />
                           </div>
+                        )}
 
-                          <div className="text-xs text-gray-500 dark:text-gray-500">
-                            {new Date(play.playedAt).toLocaleString(undefined, {
-                              month: 'short',
-                              day: 'numeric',
-                              hour: 'numeric',
-                              minute: '2-digit'
-                            })}
+                        <div className="flex-1 min-w-0">
+                          <div className="font-semibold text-white truncate group-hover:text-brand-cyan transition-colors">
+                            {play.track.name}
+                          </div>
+                          <div className="text-sm text-gray-500 truncate">
+                            {play.track.artists.map(a => a.name).join(', ')}
                           </div>
                         </div>
+
+                            <div className="text-xs text-gray-600 whitespace-nowrap">
+                              {new Date(play.playedAt).toLocaleString(undefined, {
+                                month: 'short',
+                                day: 'numeric',
+                                hour: 'numeric',
+                                minute: '2-digit'
+                              })}
+                            </div>
+                          </div>
+                        </RippleEffect>
                       ))}
                     </div>
                   )}
                 </div>
               </div>
 
-              {/* Sidebar */}
-              <div className="space-y-8">
-                {/* Top Tracks */}
-                <div className="bg-white dark:bg-zinc-900 rounded-lg border border-gray-200 dark:border-zinc-800 p-6">
-                  <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-                    Top Tracks
-                  </h2>
+              {/* Top Artists - 1/3 */}
+              <div className="glass-panel rounded-3xl p-6">
+                <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-brand-orange" />
+                  Top Artists
+                </h2>
 
-                  {topTracks.length === 0 ? (
-                    <p className="text-gray-600 dark:text-gray-400 text-sm">
-                      No data yet
-                    </p>
-                  ) : (
-                    <div className="space-y-3">
-                      {topTracks.slice(0, 5).map((item, index) => (
-                        <div key={item.track.id} className="flex items-center gap-3">
-                          <div className="text-lg font-bold text-gray-400 w-6">
-                            {index + 1}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="font-semibold text-sm text-gray-900 dark:text-white truncate">
-                              {item.track.name}
-                            </div>
-                            <div className="text-xs text-gray-600 dark:text-gray-400 truncate">
-                              {item.track.artists.map(a => a.name).join(', ')}
-                            </div>
-                          </div>
-                          <div className="text-xs font-semibold text-green-600">
-                            {item.playCount}
+                {topArtists.length === 0 ? (
+                  <p className="text-gray-500 text-sm">No data yet</p>
+                ) : (
+                  <div className="space-y-4">
+                    {topArtists.slice(0, 5).map((item, index) => (
+                      <div key={item.artist.id} className="flex items-center gap-3 group">
+                        <div className={cn(
+                          "text-xl font-bold w-6 text-center",
+                          index === 0 ? "text-brand-cyan" :
+                          index === 1 ? "text-brand-purple" :
+                          index === 2 ? "text-brand-green" : "text-gray-600"
+                        )}>
+                          {index + 1}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-semibold text-sm text-white truncate group-hover:text-brand-cyan transition-colors">
+                            {item.artist.name}
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {/* Top Artists */}
-                <div className="bg-white dark:bg-zinc-900 rounded-lg border border-gray-200 dark:border-zinc-800 p-6">
-                  <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-                    Top Artists
-                  </h2>
-
-                  {topArtists.length === 0 ? (
-                    <p className="text-gray-600 dark:text-gray-400 text-sm">
-                      No data yet
-                    </p>
-                  ) : (
-                    <div className="space-y-3">
-                      {topArtists.slice(0, 5).map((item, index) => (
-                        <div key={item.artist.id} className="flex items-center gap-3">
-                          <div className="text-lg font-bold text-gray-400 w-6">
-                            {index + 1}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="font-semibold text-sm text-gray-900 dark:text-white truncate">
-                              {item.artist.name}
-                            </div>
-                          </div>
-                          <div className="text-xs font-semibold text-green-600">
-                            {item.playCount}
-                          </div>
+                        <div className="px-2 py-1 rounded-lg bg-brand-gradient/20 text-brand-cyan text-xs font-bold">
+                          {item.playCount}
                         </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </>
@@ -552,36 +690,48 @@ export default function DashboardPage() {
 
         {/* Genres Tab */}
         {activeTab === 'genres' && (
-          <div className="bg-white dark:bg-zinc-900 rounded-lg border border-gray-200 dark:border-zinc-800 p-6">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
+          <div className="glass-panel rounded-3xl p-8">
+            <h2 className="text-3xl font-bold text-gradient mb-8">
               Genre Breakdown
             </h2>
 
             {genres.length === 0 ? (
-              <p className="text-gray-600 dark:text-gray-400 text-center py-12">
-                No genre data available. Genres are fetched from artist metadata.
-              </p>
+              <div className="text-center py-12">
+                <div className="w-16 h-16 rounded-full bg-brand-gradient/20 mx-auto mb-4 flex items-center justify-center">
+                  <Music className="w-8 h-8 text-brand-purple" />
+                </div>
+                <p className="text-gray-500">
+                  No genre data available. Genres are fetched from artist metadata.
+                </p>
+              </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-5">
                 {genres.map((genre, index) => (
-                  <div key={genre.genre} className="flex items-center gap-4">
-                    <div className="text-lg font-bold text-gray-400 w-8">
-                      {index + 1}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex justify-between mb-1">
-                        <span className="font-semibold text-gray-900 dark:text-white capitalize">
-                          {genre.genre}
-                        </span>
-                        <span className="text-sm text-gray-600 dark:text-gray-400">
-                          {genre.count} plays ({genre.percentage.toFixed(1)}%)
-                        </span>
+                  <div key={genre.genre} className="group">
+                    <div className="flex items-center gap-4 mb-2">
+                      <div className={cn(
+                        "text-2xl font-bold w-10 text-center",
+                        index === 0 ? "text-brand-cyan" :
+                        index === 1 ? "text-brand-purple" :
+                        index === 2 ? "text-brand-green" : "text-gray-600"
+                      )}>
+                        {index + 1}
                       </div>
-                      <div className="w-full bg-gray-200 dark:bg-zinc-700 rounded-full h-2">
-                        <div
-                          className="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full"
-                          style={{ width: `${Math.min(genre.percentage, 100)}%` }}
-                        />
+                      <div className="flex-1">
+                        <div className="flex justify-between mb-2">
+                          <span className="font-bold text-white capitalize text-lg group-hover:text-brand-cyan transition-colors">
+                            {genre.genre}
+                          </span>
+                          <span className="text-sm text-gray-500">
+                            {genre.count} plays ({genre.percentage.toFixed(1)}%)
+                          </span>
+                        </div>
+                        <div className="w-full h-3 bg-audio-highlight rounded-full overflow-hidden">
+                          <div
+                            className="h-3 bg-brand-gradient rounded-full transition-all duration-500 shadow-neon-cyan"
+                            style={{ width: `${Math.min(genre.percentage, 100)}%` }}
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -594,78 +744,97 @@ export default function DashboardPage() {
         {/* Comparison Tab */}
         {activeTab === 'comparison' && comparison && (
           <div className="space-y-6">
-            <div className="bg-white dark:bg-zinc-900 rounded-lg border border-gray-200 dark:border-zinc-800 p-6">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
+            <div className="glass-panel rounded-3xl p-8">
+              <h2 className="text-3xl font-bold text-gradient mb-8">
                 This Week vs Last Week
               </h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="p-4 bg-gray-50 dark:bg-zinc-800 rounded-lg">
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Plays</div>
-                  <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {comparison.thisWeek.totalPlays}
-                  </div>
-                  <div className={`text-sm mt-1 ${
-                    comparison.changes.totalPlays.value >= 0 ? 'text-green-600' : 'text-red-600'
-                  }`}>
-                    {comparison.changes.totalPlays.value >= 0 ? '↑' : '↓'}{' '}
-                    {Math.abs(comparison.changes.totalPlays.value)} ({comparison.changes.totalPlays.percentage.toFixed(1)}%)
-                  </div>
-                </div>
-
-                <div className="p-4 bg-gray-50 dark:bg-zinc-800 rounded-lg">
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Unique Tracks</div>
-                  <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {comparison.thisWeek.uniqueTracks}
-                  </div>
-                  <div className={`text-sm mt-1 ${
-                    comparison.changes.uniqueTracks.value >= 0 ? 'text-green-600' : 'text-red-600'
-                  }`}>
-                    {comparison.changes.uniqueTracks.value >= 0 ? '↑' : '↓'}{' '}
-                    {Math.abs(comparison.changes.uniqueTracks.value)}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div className="glass-panel p-6 rounded-2xl relative overflow-hidden group">
+                  <div className="absolute -right-8 -top-8 w-24 h-24 bg-brand-cyan/10 blur-2xl rounded-full" />
+                  <div className="relative z-10">
+                    <div className="text-sm text-gray-500 mb-2">Total Plays</div>
+                    <div className="text-3xl font-bold text-white mb-2">
+                      {comparison.thisWeek.totalPlays}
+                    </div>
+                    <div className={cn(
+                      "text-sm font-medium flex items-center gap-1",
+                      comparison.changes.totalPlays.value >= 0 ? 'text-brand-green' : 'text-red-500'
+                    )}>
+                      {comparison.changes.totalPlays.value >= 0 ? '↑' : '↓'}{' '}
+                      {Math.abs(comparison.changes.totalPlays.value)} ({comparison.changes.totalPlays.percentage.toFixed(1)}%)
+                    </div>
                   </div>
                 </div>
 
-                <div className="p-4 bg-gray-50 dark:bg-zinc-800 rounded-lg">
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Unique Artists</div>
-                  <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {comparison.thisWeek.uniqueArtists}
-                  </div>
-                  <div className={`text-sm mt-1 ${
-                    comparison.changes.uniqueArtists.value >= 0 ? 'text-green-600' : 'text-red-600'
-                  }`}>
-                    {comparison.changes.uniqueArtists.value >= 0 ? '↑' : '↓'}{' '}
-                    {Math.abs(comparison.changes.uniqueArtists.value)}
+                <div className="glass-panel p-6 rounded-2xl relative overflow-hidden group">
+                  <div className="absolute -right-8 -top-8 w-24 h-24 bg-brand-purple/10 blur-2xl rounded-full" />
+                  <div className="relative z-10">
+                    <div className="text-sm text-gray-500 mb-2">Unique Tracks</div>
+                    <div className="text-3xl font-bold text-white mb-2">
+                      {comparison.thisWeek.uniqueTracks}
+                    </div>
+                    <div className={cn(
+                      "text-sm font-medium flex items-center gap-1",
+                      comparison.changes.uniqueTracks.value >= 0 ? 'text-brand-green' : 'text-red-500'
+                    )}>
+                      {comparison.changes.uniqueTracks.value >= 0 ? '↑' : '↓'}{' '}
+                      {Math.abs(comparison.changes.uniqueTracks.value)}
+                    </div>
                   </div>
                 </div>
 
-                <div className="p-4 bg-gray-50 dark:bg-zinc-800 rounded-lg">
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Avg Plays/Day</div>
-                  <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {comparison.thisWeek.avgPlaysPerDay.toFixed(1)}
+                <div className="glass-panel p-6 rounded-2xl relative overflow-hidden group">
+                  <div className="absolute -right-8 -top-8 w-24 h-24 bg-brand-green/10 blur-2xl rounded-full" />
+                  <div className="relative z-10">
+                    <div className="text-sm text-gray-500 mb-2">Unique Artists</div>
+                    <div className="text-3xl font-bold text-white mb-2">
+                      {comparison.thisWeek.uniqueArtists}
+                    </div>
+                    <div className={cn(
+                      "text-sm font-medium flex items-center gap-1",
+                      comparison.changes.uniqueArtists.value >= 0 ? 'text-brand-green' : 'text-red-500'
+                    )}>
+                      {comparison.changes.uniqueArtists.value >= 0 ? '↑' : '↓'}{' '}
+                      {Math.abs(comparison.changes.uniqueArtists.value)}
+                    </div>
                   </div>
-                  <div className={`text-sm mt-1 ${
-                    comparison.changes.avgPlaysPerDay.value >= 0 ? 'text-green-600' : 'text-red-600'
-                  }`}>
-                    {comparison.changes.avgPlaysPerDay.value >= 0 ? '↑' : '↓'}{' '}
-                    {Math.abs(comparison.changes.avgPlaysPerDay.value).toFixed(1)}
+                </div>
+
+                <div className="glass-panel p-6 rounded-2xl relative overflow-hidden group">
+                  <div className="absolute -right-8 -top-8 w-24 h-24 bg-brand-orange/10 blur-2xl rounded-full" />
+                  <div className="relative z-10">
+                    <div className="text-sm text-gray-500 mb-2">Avg Plays/Day</div>
+                    <div className="text-3xl font-bold text-white mb-2">
+                      {comparison.thisWeek.avgPlaysPerDay.toFixed(1)}
+                    </div>
+                    <div className={cn(
+                      "text-sm font-medium flex items-center gap-1",
+                      comparison.changes.avgPlaysPerDay.value >= 0 ? 'text-brand-green' : 'text-red-500'
+                    )}>
+                      {comparison.changes.avgPlaysPerDay.value >= 0 ? '↑' : '↓'}{' '}
+                      {Math.abs(comparison.changes.avgPlaysPerDay.value).toFixed(1)}
+                    </div>
                   </div>
                 </div>
               </div>
 
               {comparison.topTracksThisWeek.length > 0 && (
-                <div className="mt-6">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+                <div>
+                  <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                    <TrendingUp className="w-5 h-5 text-brand-cyan" />
                     Top Tracks This Week
                   </h3>
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     {comparison.topTracksThisWeek.map((track, index) => (
-                      <div key={index} className="flex justify-between items-center p-3 bg-gray-50 dark:bg-zinc-800 rounded">
+                      <div key={index} className="flex justify-between items-center p-4 glass-panel rounded-xl hover:bg-white/5 transition-all group">
                         <div>
-                          <div className="font-semibold text-gray-900 dark:text-white">{track.name}</div>
-                          <div className="text-sm text-gray-600 dark:text-gray-400">{track.artists}</div>
+                          <div className="font-bold text-white group-hover:text-brand-cyan transition-colors">{track.name}</div>
+                          <div className="text-sm text-gray-500">{track.artists}</div>
                         </div>
-                        <div className="text-sm font-semibold text-green-600">{track.playCount} plays</div>
+                        <div className="px-3 py-1.5 rounded-lg bg-brand-gradient/20 text-brand-cyan text-sm font-bold">
+                          {track.playCount} plays
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -678,6 +847,23 @@ export default function DashboardPage() {
 
       {/* Toast Notifications */}
       <ToastContainer toasts={toasts} onClose={removeToast} />
-    </div>
+
+      {/* Full Screen Player */}
+      <FullScreenPlayer
+        isOpen={showPlayer}
+        onClose={() => setShowPlayer(false)}
+        track={
+          recentPlays[0]?.track
+            ? {
+                name: recentPlays[0].track.name,
+                artists: recentPlays[0].track.artists.map(a => a.name).join(', '),
+                album: recentPlays[0].track.album?.name || '',
+                imageUrl: recentPlays[0].track.album?.imageUrl,
+                duration: Math.floor(recentPlays[0].track.durationMs / 1000)
+              }
+            : undefined
+        }
+      />
+    </>
   );
 }

@@ -1,26 +1,171 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Deep Space Cyberpunk Design System */
+:root,
+:root.dark {
+  /* Audio/Space Colors - Dark Theme */
+  --audio-dark: #050507;
+  --audio-surface: #121214;
+  --audio-highlight: #1e1e24;
+
+  /* Brand Neon Colors */
+  --brand-cyan: #22d3ee;
+  --brand-purple: #a855f7;
+  --brand-green: #4ade80;
+  --brand-orange: #fb923c;
+
+  /* Glassmorphism */
+  --glass-bg: rgba(18, 18, 20, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.08);
+
+  /* Legacy support */
+  --background: #050507;
+  --foreground: #ededed;
+}
+
+/* Light Theme */
+:root.light {
+  /* Audio/Space Colors - Light Theme */
+  --audio-dark: #f8fafc;
+  --audio-surface: #ffffff;
+  --audio-highlight: #f1f5f9;
+
+  /* Brand Colors (darker for better contrast in light mode) */
+  --brand-cyan: #0891b2;
+  --brand-purple: #7c3aed;
+  --brand-green: #16a34a;
+  --brand-orange: #ea580c;
+
+  /* Glassmorphism for light mode */
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(0, 0, 0, 0.12);
+
+  /* Legacy support */
+  --background: #f8fafc;
+  --foreground: #0f172a;
+}
+
+/* Light mode text overrides for visibility */
+:root.light body {
+  color: #0f172a;
+}
+
+:root.light .text-white {
+  color: #0f172a !important;
+}
+
+:root.light .text-gray-300 {
+  color: #475569 !important;
+}
+
+:root.light .text-gray-400 {
+  color: #64748b !important;
+}
+
+:root.light .text-gray-500 {
+  color: #64748b !important;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Audio Space Colors */
+  --color-audio-dark: var(--audio-dark);
+  --color-audio-surface: var(--audio-surface);
+  --color-audio-highlight: var(--audio-highlight);
+
+  /* Brand Colors */
+  --color-brand-cyan: var(--brand-cyan);
+  --color-brand-purple: var(--brand-purple);
+  --color-brand-green: var(--brand-green);
+  --color-brand-orange: var(--brand-orange);
+
+  /* Gradients */
+  --color-brand-gradient-start: var(--brand-cyan);
+  --color-brand-gradient-end: var(--brand-purple);
+
+  /* Typography */
+  --font-sans: var(--font-inter);
+
+  /* Custom Utilities */
+  --animate-spin-slow: spin 3s linear infinite;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Custom Animations */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spin 3s linear infinite;
+}
+
+/* Glass Panel Utility */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+}
+
+/* Text Gradient Utility */
+.text-gradient {
+  background: linear-gradient(135deg, var(--brand-cyan) 0%, var(--brand-purple) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Neon Glow Effects */
+.shadow-neon-cyan {
+  box-shadow: 0 0 20px -5px rgba(34, 211, 238, 0.5);
+}
+
+.shadow-neon-purple {
+  box-shadow: 0 0 20px -5px rgba(168, 85, 247, 0.5);
+}
+
+.shadow-neon-green {
+  box-shadow: 0 0 20px -5px rgba(74, 222, 128, 0.5);
+}
+
+/* Subtle Glow Background */
+.bg-subtle-glow {
+  background: radial-gradient(circle at center, rgba(168, 85, 247, 0.15) 0%, rgba(5, 5, 7, 0) 70%);
+}
+
+/* Brand Gradient Background */
+.bg-brand-gradient {
+  background: linear-gradient(135deg, var(--brand-cyan) 0%, var(--brand-purple) 100%);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+/* Selection Color */
+::selection {
+  background-color: rgba(34, 211, 238, 0.3);
+  color: white;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--audio-surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--audio-highlight);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(168, 85, 247, 0.5);
 }

@@ -5,6 +5,7 @@ import { SessionProvider } from "@/components/SessionProvider";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { CookieConsent } from "@/components/CookieConsent";
 import { Analytics } from "@vercel/analytics/react";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -24,12 +25,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.variable} antialiased`}
+        className={`${inter.variable} antialiased bg-audio-dark text-white selection:bg-brand-cyan/30`}
       >
+        {/* Subtle purple glow background effect */}
+        <div className="fixed inset-0 bg-subtle-glow pointer-events-none z-0" />
+
         <ErrorBoundary>
-          <SessionProvider>
-            {children}
-          </SessionProvider>
+          <ThemeProvider>
+            <SessionProvider>
+              {children}
+            </SessionProvider>
+          </ThemeProvider>
         </ErrorBoundary>
         <CookieConsent />
         <Analytics />

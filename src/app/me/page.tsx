@@ -3,6 +3,11 @@
 import { useSession, signOut } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Sidebar from '@/components/Sidebar';
+import RippleEffect from '@/components/RippleEffect';
+import ParticleField from '@/components/ParticleField';
+import { Music, Play, TrendingUp, Award, LogOut, User, Clock, Calendar, Target } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface UserStats {
   totalPlays: number;
@@ -48,7 +53,6 @@ export default function ProfilePage() {
         fetch('/api/analytics/diversity?range=all')
       ]);
 
-      // Check if any responses failed (401, 500, etc.)
       if (!statsRes.ok || !streaksRes.ok || !diversityRes.ok) {
         console.error('One or more API requests failed');
         return;
@@ -72,90 +76,114 @@ export default function ProfilePage() {
 
   if (status === 'loading' || loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">Loading profile...</p>
+      <>
+        <Sidebar />
+        <div className="min-h-screen flex items-center justify-center lg:ml-72 relative z-10">
+          <div className="text-center">
+            <div className="w-16 h-16 rounded-full bg-brand-gradient mx-auto mb-6 flex items-center justify-center shadow-neon-cyan animate-pulse">
+              <User className="w-8 h-8 text-white" />
+            </div>
+            <p className="text-gray-400 text-lg">Loading your profile...</p>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   if (!session) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center p-8">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Sign in Required</h1>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">
-            You need to be signed in to view your profile.
-          </p>
-          <Link
-            href="/"
-            className="px-6 py-3 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors"
-          >
-            Go to Home
-          </Link>
+      <>
+        <Sidebar />
+        <div className="min-h-screen flex items-center justify-center p-8 lg:ml-72 relative z-10">
+          <div className="text-center glass-panel p-12 rounded-3xl max-w-md">
+            <div className="w-20 h-20 rounded-full bg-brand-gradient mx-auto mb-6 flex items-center justify-center shadow-neon-purple">
+              <User className="w-10 h-10 text-white" />
+            </div>
+            <h1 className="text-3xl font-bold mb-4 text-gradient">Sign in Required</h1>
+            <p className="text-gray-400 mb-8">
+              You need to be signed in to view your profile.
+            </p>
+            <Link
+              href="/"
+              className="inline-block px-8 py-3 bg-brand-gradient text-white rounded-full hover:shadow-neon-cyan transition-all font-medium"
+            >
+              Go to Home
+            </Link>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-black">
-      {/* Header */}
-      <header className="bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-800">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              My Profile
-            </h1>
-            <div className="flex gap-2">
-              <Link
-                href="/dashboard"
-                className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
-              >
-                Dashboard
-              </Link>
-              <Link
-                href="/"
-                className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
-              >
-                Home
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
+    <>
+      <Sidebar />
 
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Profile Header Card */}
-        <div className="bg-white dark:bg-zinc-900 rounded-lg border border-gray-200 dark:border-zinc-800 p-8 mb-8">
-          <div className="flex items-start gap-6">
+      <main className="flex-1 lg:ml-72 p-4 lg:p-8 z-10 relative min-h-screen pt-20 lg:pt-8">
+        {/* Profile Header */}
+        <div className="glass-panel rounded-3xl p-8 mb-8 relative overflow-hidden">
+          <ParticleField particleCount={15} className="opacity-30" />
+          <div className="absolute -right-20 -top-20 w-64 h-64 bg-brand-purple/10 blur-3xl rounded-full" />
+
+          <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-6">
+            {/* Profile Image */}
             {session.user.image ? (
-              <img
-                src={session.user.image}
-                alt={session.user.name || 'Profile'}
-                className="w-24 h-24 rounded-full border-4 border-green-600"
-              />
+              <div className="relative">
+                <img
+                  src={session.user.image}
+                  alt={session.user.name || 'Profile'}
+                  className="w-32 h-32 rounded-full border-4 border-brand-gradient shadow-neon-purple"
+                />
+                <div className="absolute -bottom-2 -right-2 w-10 h-10 rounded-full bg-brand-gradient flex items-center justify-center shadow-neon-cyan">
+                  <Music className="w-5 h-5 text-white" />
+                </div>
+              </div>
             ) : (
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white text-4xl font-bold">
+              <div className="relative w-32 h-32 rounded-full bg-brand-gradient flex items-center justify-center text-white text-5xl font-bold shadow-neon-purple">
                 {session.user.name?.[0] || 'U'}
+                <div className="absolute -bottom-2 -right-2 w-10 h-10 rounded-full bg-audio-surface border-2 border-brand-cyan flex items-center justify-center">
+                  <Music className="w-5 h-5 text-brand-cyan" />
+                </div>
               </div>
             )}
 
+            {/* Profile Info */}
             <div className="flex-1">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+              <h2 className="text-4xl font-bold text-gradient mb-2">
                 {session.user.name || 'Music Lover'}
               </h2>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
+              <p className="text-gray-400 mb-4 flex items-center gap-2">
+                <User className="w-4 h-4" />
                 {session.user.email}
               </p>
 
               {diversity && (
-                <div className="inline-block px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-full font-semibold">
-                  🏆 {diversity.badge}
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-brand-gradient text-white rounded-full font-semibold shadow-neon-purple">
+                  <Award className="w-5 h-5" />
+                  {diversity.badge}
                 </div>
               )}
+            </div>
+
+            {/* Quick Actions */}
+            <div className="flex flex-col gap-2">
+              <RippleEffect>
+                <Link
+                  href="/dashboard"
+                  className="px-6 py-3 glass-panel rounded-xl hover:bg-white/10 transition-all text-white font-medium flex items-center gap-2"
+                >
+                  <TrendingUp className="w-4 h-4" />
+                  Dashboard
+                </Link>
+              </RippleEffect>
+              <RippleEffect>
+                <Link
+                  href="/"
+                  className="px-6 py-3 glass-panel rounded-xl hover:bg-white/10 transition-all text-gray-400 hover:text-white font-medium text-center"
+                >
+                  Home
+                </Link>
+              </RippleEffect>
             </div>
           </div>
         </div>
@@ -163,75 +191,115 @@ export default function ProfilePage() {
         {/* Stats Grid */}
         {stats && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <div className="bg-white dark:bg-zinc-900 rounded-lg border border-gray-200 dark:border-zinc-800 p-6">
-              <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Plays</div>
-              <div className="text-3xl font-bold text-gray-900 dark:text-white">
-                {stats.totalPlays.toLocaleString()}
+            <div className="glass-panel rounded-2xl p-6 hover:bg-white/5 transition-all relative overflow-hidden group">
+              <div className="absolute -right-8 -top-8 w-24 h-24 bg-brand-cyan/10 blur-2xl rounded-full" />
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="text-sm text-gray-400">Total Plays</div>
+                  <Play className="w-4 h-4 text-brand-cyan" />
+                </div>
+                <div className="text-4xl font-bold text-white">
+                  {stats.totalPlays.toLocaleString()}
+                </div>
               </div>
             </div>
 
-            <div className="bg-white dark:bg-zinc-900 rounded-lg border border-gray-200 dark:border-zinc-800 p-6">
-              <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Unique Tracks</div>
-              <div className="text-3xl font-bold text-gray-900 dark:text-white">
-                {stats.uniqueTracks.toLocaleString()}
+            <div className="glass-panel rounded-2xl p-6 hover:bg-white/5 transition-all relative overflow-hidden group">
+              <div className="absolute -right-8 -top-8 w-24 h-24 bg-brand-purple/10 blur-2xl rounded-full" />
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="text-sm text-gray-400">Unique Tracks</div>
+                  <Music className="w-4 h-4 text-brand-purple" />
+                </div>
+                <div className="text-4xl font-bold text-white">
+                  {stats.uniqueTracks.toLocaleString()}
+                </div>
               </div>
             </div>
 
-            <div className="bg-white dark:bg-zinc-900 rounded-lg border border-gray-200 dark:border-zinc-800 p-6">
-              <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Unique Artists</div>
-              <div className="text-3xl font-bold text-gray-900 dark:text-white">
-                {stats.uniqueArtists.toLocaleString()}
+            <div className="glass-panel rounded-2xl p-6 hover:bg-white/5 transition-all relative overflow-hidden group">
+              <div className="absolute -right-8 -top-8 w-24 h-24 bg-brand-green/10 blur-2xl rounded-full" />
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="text-sm text-gray-400">Artists</div>
+                  <TrendingUp className="w-4 h-4 text-brand-green" />
+                </div>
+                <div className="text-4xl font-bold text-white">
+                  {stats.uniqueArtists.toLocaleString()}
+                </div>
               </div>
             </div>
 
-            <div className="bg-white dark:bg-zinc-900 rounded-lg border border-gray-200 dark:border-zinc-800 p-6">
-              <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Listening Hours</div>
-              <div className="text-3xl font-bold text-gray-900 dark:text-white">
-                ~{stats.estimatedListeningHours.toLocaleString()}
+            <div className="glass-panel rounded-2xl p-6 hover:bg-white/5 transition-all relative overflow-hidden group">
+              <div className="absolute -right-8 -top-8 w-24 h-24 bg-brand-orange/10 blur-2xl rounded-full" />
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="text-sm text-gray-400">Hours</div>
+                  <Clock className="w-4 h-4 text-brand-orange" />
+                </div>
+                <div className="text-4xl font-bold text-white">
+                  ~{stats.estimatedListeningHours.toLocaleString()}
+                </div>
               </div>
             </div>
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Streaks & Diversity */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Streaks */}
           {streaks && (
-            <div className="bg-white dark:bg-zinc-900 rounded-lg border border-gray-200 dark:border-zinc-800 p-6">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-                🔥 Listening Streaks
-              </h3>
+            <div className="glass-panel rounded-3xl p-8 relative overflow-hidden">
+              <div className="absolute -right-10 -top-10 w-32 h-32 bg-brand-orange/10 blur-3xl rounded-full" />
+              <div className="relative z-10">
+                <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-brand-orange shadow-neon-green animate-pulse" />
+                  Listening Streaks
+                </h3>
 
-              <div className="space-y-4">
-                <div className="flex justify-between items-center p-4 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-950/30 dark:to-red-950/30 rounded-lg border border-orange-200 dark:border-orange-900">
-                  <div>
-                    <div className="text-sm text-orange-700 dark:text-orange-400">Current Streak</div>
-                    <div className="text-3xl font-bold text-orange-900 dark:text-orange-300">
-                      {streaks.currentStreak} days
+                <div className="space-y-4">
+                  <div className={cn(
+                    "p-6 rounded-2xl border-2 relative overflow-hidden",
+                    streaks.isActiveToday
+                      ? "bg-gradient-to-br from-brand-orange/20 to-red-500/20 border-brand-orange"
+                      : "glass-panel border-transparent"
+                  )}>
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <div className="text-sm text-gray-400 mb-1">Current Streak</div>
+                        <div className="text-4xl font-bold text-gradient">
+                          {streaks.currentStreak} days
+                        </div>
+                      </div>
+                      {streaks.isActiveToday && (
+                        <div className="text-5xl animate-pulse">🔥</div>
+                      )}
                     </div>
                   </div>
-                  {streaks.isActiveToday && (
-                    <div className="text-2xl">🔥</div>
-                  )}
-                </div>
 
-                <div className="flex justify-between items-center p-4 bg-gray-50 dark:bg-zinc-800 rounded-lg">
-                  <div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">Longest Streak</div>
-                    <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                      {streaks.longestStreak} days
+                  <div className="glass-panel p-6 rounded-2xl">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <div className="text-sm text-gray-400 mb-1">Longest Streak</div>
+                        <div className="text-3xl font-bold text-white">
+                          {streaks.longestStreak} days
+                        </div>
+                      </div>
+                      <div className="text-4xl">🏆</div>
                     </div>
                   </div>
-                  <div className="text-2xl">🏆</div>
-                </div>
 
-                <div className="flex justify-between items-center p-4 bg-gray-50 dark:bg-zinc-800 rounded-lg">
-                  <div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">Total Active Days</div>
-                    <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                      {streaks.totalDaysActive}
+                  <div className="glass-panel p-6 rounded-2xl">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <div className="text-sm text-gray-400 mb-1">Total Active Days</div>
+                        <div className="text-3xl font-bold text-white">
+                          {streaks.totalDaysActive}
+                        </div>
+                      </div>
+                      <Calendar className="w-10 h-10 text-brand-cyan" />
                     </div>
                   </div>
-                  <div className="text-2xl">📅</div>
                 </div>
               </div>
             </div>
@@ -239,92 +307,117 @@ export default function ProfilePage() {
 
           {/* Diversity Score */}
           {diversity && (
-            <div className="bg-white dark:bg-zinc-900 rounded-lg border border-gray-200 dark:border-zinc-800 p-6">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-                🎨 Listening Diversity
-              </h3>
+            <div className="glass-panel rounded-3xl p-8 relative overflow-hidden">
+              <div className="absolute -right-10 -top-10 w-32 h-32 bg-brand-purple/10 blur-3xl rounded-full" />
+              <div className="relative z-10">
+                <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-brand-purple shadow-neon-purple animate-pulse" />
+                  Listening Diversity
+                </h3>
 
-              <div className="mb-6">
-                <div className="flex justify-between mb-2">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Diversity Score</span>
-                  <span className="text-sm font-bold text-gray-900 dark:text-white">
-                    {diversity.diversityScore}/100
-                  </span>
+                <div className="mb-8">
+                  <div className="flex justify-between mb-3">
+                    <span className="text-gray-400 flex items-center gap-2">
+                      <Target className="w-4 h-4" />
+                      Diversity Score
+                    </span>
+                    <span className="text-2xl font-bold text-gradient">
+                      {diversity.diversityScore}/100
+                    </span>
+                  </div>
+                  <div className="w-full h-4 bg-audio-highlight rounded-full overflow-hidden">
+                    <div
+                      className="h-4 bg-brand-gradient rounded-full transition-all shadow-neon-cyan"
+                      style={{ width: `${diversity.diversityScore}%` }}
+                    />
+                  </div>
                 </div>
-                <div className="w-full bg-gray-200 dark:bg-zinc-700 rounded-full h-3">
-                  <div
-                    className="bg-gradient-to-r from-green-500 to-emerald-500 h-3 rounded-full transition-all"
-                    style={{ width: `${diversity.diversityScore}%` }}
-                  />
+
+                <div className="glass-panel p-6 rounded-2xl border border-brand-purple/30 relative overflow-hidden">
+                  <div className="absolute -right-6 -top-6 w-20 h-20 bg-brand-purple/10 blur-2xl rounded-full" />
+                  <div className="relative z-10">
+                    <div className="text-4xl mb-3 flex items-center gap-3">
+                      <Award className="w-10 h-10 text-brand-purple" />
+                      {diversity.badge}
+                    </div>
+                    <p className="text-gray-300 text-sm leading-relaxed">
+                      {diversity.interpretation}
+                    </p>
+                  </div>
                 </div>
-              </div>
 
-              <div className="p-4 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 rounded-lg border border-green-200 dark:border-green-900">
-                <div className="text-2xl mb-2">🏆 {diversity.badge}</div>
-                <p className="text-sm text-gray-700 dark:text-gray-300">
-                  {diversity.interpretation}
-                </p>
-              </div>
-
-              <div className="mt-4">
-                <Link
-                  href="/dashboard"
-                  className="text-sm text-green-600 hover:underline"
-                >
-                  View detailed analytics →
-                </Link>
+                <div className="mt-6">
+                  <Link
+                    href="/dashboard"
+                    className="text-brand-cyan hover:underline inline-flex items-center gap-2"
+                  >
+                    View detailed analytics
+                    <TrendingUp className="w-4 h-4" />
+                  </Link>
+                </div>
               </div>
             </div>
           )}
         </div>
 
         {/* Account Actions */}
-        <div className="mt-8 bg-white dark:bg-zinc-900 rounded-lg border border-gray-200 dark:border-zinc-800 p-6">
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-            Account Settings
-          </h3>
+        <div className="glass-panel rounded-3xl p-8 relative overflow-hidden">
+          <div className="absolute -right-10 -top-10 w-32 h-32 bg-brand-cyan/10 blur-3xl rounded-full" />
+          <div className="relative z-10">
+            <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+              <div className="w-2 h-2 rounded-full bg-brand-cyan shadow-neon-cyan animate-pulse" />
+              Account Settings
+            </h3>
 
-          <div className="space-y-4">
-            <div className="flex justify-between items-center py-3 border-b border-gray-200 dark:border-zinc-800">
-              <div>
-                <div className="font-semibold text-gray-900 dark:text-white">Spotify Connection</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Connected and active</div>
-              </div>
-              <div className="text-green-600">✓</div>
-            </div>
-
-            <div className="flex justify-between items-center py-3 border-b border-gray-200 dark:border-zinc-800">
-              <div>
-                <div className="font-semibold text-gray-900 dark:text-white">Automatic Archival</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">
-                  {stats?.lastPlayAt
-                    ? `Last archived: ${new Date(stats.lastPlayAt).toLocaleString()}`
-                    : 'Not yet archived'}
+            <div className="space-y-4">
+              <div className="glass-panel p-6 rounded-2xl flex justify-between items-center">
+                <div>
+                  <div className="font-semibold text-white mb-1">Spotify Connection</div>
+                  <div className="text-sm text-gray-400">Connected and active</div>
+                </div>
+                <div className="w-10 h-10 rounded-full bg-brand-green/20 flex items-center justify-center">
+                  <div className="w-3 h-3 rounded-full bg-brand-green shadow-neon-green" />
                 </div>
               </div>
-              <Link
-                href="/test"
-                className="px-4 py-2 text-sm bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors"
-              >
-                Run Now
-              </Link>
-            </div>
 
-            <div className="flex justify-between items-center py-3">
-              <div>
-                <div className="font-semibold text-gray-900 dark:text-white">Sign Out</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Disconnect your Spotify account</div>
+              <div className="glass-panel p-6 rounded-2xl flex justify-between items-center">
+                <div>
+                  <div className="font-semibold text-white mb-1">Automatic Archival</div>
+                  <div className="text-sm text-gray-400">
+                    {stats?.lastPlayAt
+                      ? `Last archived: ${new Date(stats.lastPlayAt).toLocaleString()}`
+                      : 'Not yet archived'}
+                  </div>
+                </div>
+                <RippleEffect>
+                  <Link
+                    href="/test"
+                    className="px-6 py-3 bg-brand-gradient text-white rounded-xl hover:shadow-neon-purple transition-all font-medium"
+                  >
+                    Run Now
+                  </Link>
+                </RippleEffect>
               </div>
-              <button
-                onClick={() => signOut({ callbackUrl: '/' })}
-                className="px-4 py-2 text-sm border border-red-600 text-red-600 rounded-full hover:bg-red-50 dark:hover:bg-red-950 transition-colors"
-              >
-                Sign Out
-              </button>
+
+              <div className="glass-panel p-6 rounded-2xl flex justify-between items-center">
+                <div>
+                  <div className="font-semibold text-white mb-1">Sign Out</div>
+                  <div className="text-sm text-gray-400">Disconnect your Spotify account</div>
+                </div>
+                <RippleEffect>
+                  <button
+                    onClick={() => signOut({ callbackUrl: '/' })}
+                    className="px-6 py-3 glass-panel border border-red-500/50 text-red-400 rounded-xl hover:bg-red-500/10 transition-all font-medium flex items-center gap-2"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Sign Out
+                  </button>
+                </RippleEffect>
+              </div>
             </div>
           </div>
         </div>
       </main>
-    </div>
+    </>
   );
 }

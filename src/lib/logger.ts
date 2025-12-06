@@ -47,22 +47,21 @@ const baseConfig: pino.LoggerOptions = {
 };
 
 // Create logger with environment-specific configuration
-export const logger = pino(
-  baseConfig,
-  // Pretty print in development for better readability
-  process.env.NODE_ENV === 'development'
-    ? pino.transport({
-        target: 'pino-pretty',
-        options: {
-          colorize: true,
-          translateTime: 'HH:MM:ss',
-          ignore: 'pid,hostname',
-          singleLine: false,
-          messageFormat: '{levelLabel} - {msg}',
+// Note: In development, we use simple console output to avoid worker thread issues with HMR
+export const logger = process.env.NODE_ENV === 'development'
+  ? pino({
+      ...baseConfig,
+      transport: {
+        target: 'pino/file',
+        options: { destination: 1 }, // stdout
+      },
+      formatters: {
+        level: (label) => {
+          return { level: label };
         },
-      })
-    : undefined
-);
+      },
+    })
+  : pino(baseConfig);
 
 /**
  * Create a child logger with additional context

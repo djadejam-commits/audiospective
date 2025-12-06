@@ -50,20 +50,20 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline'", // unsafe-inline needed for Next.js
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://va.vercel-scripts.com", // unsafe-inline needed for Next.js, Vercel Analytics
               "style-src 'self' 'unsafe-inline'", // unsafe-inline needed for Tailwind
-              "img-src 'self' https://i.scdn.co https://*.spotifycdn.com https://*.fbcdn.net data: blob:", // Spotify images + profile pics
+              "img-src 'self' https://i.scdn.co https://*.spotifycdn.com https://*.fbcdn.net https://authjs.dev data: blob:", // Spotify images + profile pics + NextAuth provider logos
               "font-src 'self' data:",
-              "connect-src 'self' https://api.spotify.com https://accounts.spotify.com https://*.upstash.io https://*.sentry.io", // API endpoints
+              "connect-src 'self' https://api.spotify.com https://accounts.spotify.com https://*.upstash.io https://*.sentry.io https://vitals.vercel-insights.com https://va.vercel-scripts.com", // API endpoints + Analytics
               "media-src 'self'",
               "worker-src 'self' blob:", // CRITICAL: Allow Sentry web workers to prevent CSP violations
               "object-src 'none'",
               "frame-ancestors 'none'", // Prevent embedding
               "base-uri 'self'",
-              "form-action 'self'",
-              "upgrade-insecure-requests", // Automatically upgrade HTTP to HTTPS
+              "form-action 'self' http://localhost:3000 http://127.0.0.1:3000 https://*.vercel.app",
+              ...(process.env.NODE_ENV === 'production' ? ["upgrade-insecure-requests"] : []), // Only upgrade in production
               "report-uri /api/csp-report" // Send CSP violations to Sentry for monitoring
-            ].join('; ')
+            ].filter(Boolean).join('; ')
           }
         ]
       },

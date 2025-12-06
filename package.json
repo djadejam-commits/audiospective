@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "NODE_OPTIONS='--no-deprecation' next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
@@ -30,6 +30,8 @@
     "@upstash/ratelimit": "^2.0.7",
     "@upstash/redis": "^1.35.7",
     "@vercel/analytics": "^1.6.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.556.0",
     "next": "^14.2.18",
     "next-auth": "^4.24.13",
     "pino": "^10.1.0",
@@ -37,6 +39,8 @@
     "react": "^18.2.0",
     "react-cookie-consent": "^9.0.0",
     "react-dom": "^18.2.0",
+    "recharts": "^3.5.1",
+    "tailwind-merge": "^3.4.0",
     "zod": "^4.1.13"
   },
   "devDependencies": {

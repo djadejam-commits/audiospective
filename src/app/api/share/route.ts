@@ -2,6 +2,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { shareService } from '@/services/share-service';
+import { logger } from '@/lib/logger';
 
 /**
  * POST /api/share
@@ -9,7 +11,8 @@ import { authOptions } from '@/lib/auth';
  *
  * Body:
  * - title: string (optional)
- * - dateRange: '1d' | '7d' | '30d' | 'all'
+ * - description: string (optional)
+ * - dateRange: '1d' | '7d' | '30d' | 'all' (optional, defaults to 'all')
  */
 export async function POST(req: NextRequest) {
   try {
@@ -23,16 +26,32 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { title: _title, dateRange: _dateRange = 'all' } = body;
+    const { title, description, dateRange = 'all' } = body;
 
-    // For now, return a simple message
-    // TODO: Implement full share functionality with database storage
-    return NextResponse.json({
-      error: 'Share functionality coming soon! This feature will allow you to create shareable links of your listening stats.'
-    }, { status: 501 }); // 501 Not Implemented
+    logger.info('Creating share report', {
+      userId: session.user.id,
+      dateRange,
+    });
+
+    // Create shareable report
+    const shareReport = await shareService.createShareReport(
+      session.user.id,
+      session.user.name,
+      session.user.email,
+      title,
+      description,
+      dateRange
+    );
+
+    logger.info('Share report created successfully', {
+      shareId: shareReport.shareId,
+      userId: session.user.id,
+    });
+
+    return NextResponse.json(shareReport, { status: 201 });
 
   } catch (error: unknown) {
-    console.error('[Share API] Error:', error);
+    logger.error({ err: error }, 'Failed to create share report');
     const message = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
       { error: 'Failed to create share link', message },
