@@ -28,10 +28,10 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { title, description, dateRange = 'all' } = body;
 
-    logger.info('Creating share report', {
+    logger.info({
       userId: session.user.id,
       dateRange,
-    });
+    }, 'Creating share report');
 
     // Create shareable report
     const shareReport = await shareService.createShareReport(
@@ -43,10 +43,10 @@ export async function POST(req: NextRequest) {
       dateRange
     );
 
-    logger.info('Share report created successfully', {
+    logger.info({
       shareId: shareReport.shareId,
       userId: session.user.id,
-    });
+    }, 'Share report created successfully');
 
     return NextResponse.json(shareReport, { status: 201 });
 
