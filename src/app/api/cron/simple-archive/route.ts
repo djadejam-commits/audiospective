@@ -33,6 +33,7 @@ export async function GET(req: NextRequest) {
 
   try {
     // Fetch active users with valid tokens
+    // PRIORITIZE users who manually requested archive via archiveRequested flag
     const activeUsers = await prisma.user.findMany({
       where: {
         isActive: true,
@@ -45,8 +46,11 @@ export async function GET(req: NextRequest) {
         id: true,
         name: true,
         consecutiveFailures: true,
+        archiveRequested: true,
+        archiveRequestedAt: true,
       },
       orderBy: [
+        { archiveRequested: 'desc' }, // PRIORITY: Process users who manually requested archive first
         { consecutiveFailures: 'asc' }, // Process healthy users first
         { lastPolledAt: 'asc' } // Process users who haven't been polled recently
       ],
@@ -75,7 +79,10 @@ export async function GET(req: NextRequest) {
 
     for (const user of activeUsers) {
       try {
-        logger.debug({ userId: user.id }, 'Archiving user');
+        logger.debug({
+          userId: user.id,
+          archiveRequested: user.archiveRequested
+        }, 'Archiving user');
 
         const result = await archiveUser(user.id);
 
@@ -85,6 +92,18 @@ export async function GET(req: NextRequest) {
             userId: user.id,
             tracksArchived: result.tracksArchived
           }, 'User archived successfully');
+
+          // Clear archiveRequested flag after successful processing
+          if (user.archiveRequested) {
+            await prisma.user.update({
+              where: { id: user.id },
+              data: {
+                archiveRequested: false,
+                archiveRequestedAt: null
+              }
+            });
+            logger.info({ userId: user.id }, 'Cleared manual archive request flag');
+          }
         } else {
           results.failed++;
           results.errors.push({

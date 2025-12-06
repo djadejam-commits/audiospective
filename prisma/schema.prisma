@@ -39,6 +39,10 @@ model User {
   authNotificationCount   Int       @default(0) @map("auth_notification_count")
   lastNotificationSent    DateTime? @map("last_notification_sent")
 
+  // Manual Archive Request (for async archive on-demand)
+  archiveRequested        Boolean   @default(false) @map("archive_requested")
+  archiveRequestedAt      DateTime? @map("archive_requested_at")
+
   // Business Logic: Founding Member Cap (EC-BIZ-001, EC-BIZ-003)
   subscriptionPlan        String    @default("free") @map("subscription_plan") // "free" | "pro"
   foundingMemberNumber    Int?      @unique @map("founding_member_number")
