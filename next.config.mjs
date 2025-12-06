@@ -4,6 +4,39 @@ import { withSentryConfig } from '@sentry/nextjs';
 const nextConfig = {
   /* Security Headers */
   async headers() {
+    // Temporarily disable CSP in development to avoid browser caching issues
+    // CSP will still be enforced in production
+    if (process.env.NODE_ENV !== 'production') {
+      return [
+        {
+          // CORS headers for API routes in development
+          source: '/api/:path*',
+          headers: [
+            {
+              key: 'Access-Control-Allow-Credentials',
+              value: 'true'
+            },
+            {
+              key: 'Access-Control-Allow-Origin',
+              value: process.env.NEXTAUTH_URL || 'http://localhost:3000'
+            },
+            {
+              key: 'Access-Control-Allow-Methods',
+              value: 'GET,POST,PUT,DELETE,OPTIONS'
+            },
+            {
+              key: 'Access-Control-Allow-Headers',
+              value: 'Content-Type, Authorization, X-CSRF-Token, X-Requested-With'
+            },
+            {
+              key: 'Access-Control-Max-Age',
+              value: '86400'
+            }
+          ]
+        }
+      ];
+    }
+
     return [
       {
         // Apply to all routes
