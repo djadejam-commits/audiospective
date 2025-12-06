@@ -28,6 +28,36 @@ Sentry.init({
   // Enable sending user PII (Personally Identifiable Information)
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
   sendDefaultPii: true,
+
+  // Before send hook to capture and enhance CSP violations
+  // Prevents incidents like INC-2025-12-06-001 (CSP worker-src violation)
+  beforeSend(event, _hint) {
+    // Check if this is a CSP violation
+    if (event.exception?.values?.[0]?.value?.includes('Content Security Policy')) {
+      // Add custom tag for easy filtering in Sentry
+      event.tags = {
+        ...event.tags,
+        csp_violation: true,
+        incident_prevention: 'INC-2025-12-06-001'
+      };
+
+      // Increase severity for CSP violations
+      event.level = 'error';
+
+      // Add breadcrumb for context
+      event.breadcrumbs = [
+        ...(event.breadcrumbs || []),
+        {
+          type: 'info',
+          category: 'csp',
+          message: 'CSP violation detected - check next.config.mjs headers',
+          level: 'warning'
+        }
+      ];
+    }
+
+    return event;
+  }
 });
 
 export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;

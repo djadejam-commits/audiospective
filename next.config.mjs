@@ -61,7 +61,8 @@ const nextConfig = {
               "frame-ancestors 'none'", // Prevent embedding
               "base-uri 'self'",
               "form-action 'self'",
-              "upgrade-insecure-requests" // Automatically upgrade HTTP to HTTPS
+              "upgrade-insecure-requests", // Automatically upgrade HTTP to HTTPS
+              "report-uri /api/csp-report" // Send CSP violations to Sentry for monitoring
             ].join('; ')
           }
         ]

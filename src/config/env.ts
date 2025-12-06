@@ -177,6 +177,50 @@ export const hasQStash = !!(env.QSTASH_TOKEN && env.QSTASH_CURRENT_SIGNING_KEY);
 export const hasSentry = !!env.NEXT_PUBLIC_SENTRY_DSN;
 
 /**
+ * Validate deployment domain consistency
+ *
+ * Prevents incidents like INC-2025-12-06-001 where NEXTAUTH_URL
+ * doesn't match the actual deployment domain
+ */
+function validateDeploymentDomain() {
+  // Only run in production
+  if (env.NODE_ENV !== 'production') return;
+
+  const nextAuthUrl = env.NEXTAUTH_URL;
+  const vercelUrl = env.VERCEL_URL;
+
+  // Skip validation if VERCEL_URL is not set (non-Vercel deployments)
+  if (!vercelUrl) return;
+
+  // Extract domain from NEXTAUTH_URL (remove protocol)
+  const nextAuthDomain = nextAuthUrl.replace(/^https?:\/\//, '');
+
+  // Check if VERCEL_URL matches NEXTAUTH_URL domain
+  if (!nextAuthDomain.includes(vercelUrl)) {
+    console.warn('');
+    console.warn('⚠️  DEPLOYMENT DOMAIN MISMATCH DETECTED');
+    console.warn('');
+    console.warn(`  NEXTAUTH_URL: ${nextAuthUrl}`);
+    console.warn(`  VERCEL_URL:   ${vercelUrl}`);
+    console.warn('');
+    console.warn('  This mismatch can cause OAuth authentication failures!');
+    console.warn('');
+    console.warn('  Actions required:');
+    console.warn('  1. Update NEXTAUTH_URL in Vercel environment variables');
+    console.warn(`     Should be: https://${vercelUrl}`);
+    console.warn('  2. Update OAuth provider redirect URIs (Spotify, etc.)');
+    console.warn(`     Should include: https://${vercelUrl}/api/auth/callback/[provider]`);
+    console.warn('  3. Redeploy after making changes');
+    console.warn('');
+    console.warn('  Reference: docs/INCIDENTS/2025-12-06-csp-auth-domain.md');
+    console.warn('');
+  }
+}
+
+// Run deployment domain validation
+validateDeploymentDomain();
+
+/**
  * Utility: Get connection info for logging (without exposing secrets)
  */
 export function getConnectionInfo() {
