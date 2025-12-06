@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+
+export const dynamic = 'force-dynamic';
 import { auth } from '@/lib/auth';
 import { ensureFreshToken } from '@/lib/ensure-fresh-token';
 import { getRecentlyPlayed } from '@/lib/spotify-api';
